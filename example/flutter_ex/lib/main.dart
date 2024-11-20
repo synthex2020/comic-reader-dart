@@ -1,9 +1,10 @@
 import 'dart:typed_data';
-
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:epubx/epubx.dart' as epub;
 import 'package:image/image.dart' as image;
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
 void main() => runApp(EpubWidget());
 
@@ -103,7 +104,7 @@ class EpubState extends State<EpubWidget> {
                   children: [
                     ...[
                       'https://filesamples.com/samples/ebook/epub/Around%20the%20World%20in%2028%20Languages.epub',
-                      'https://filesamples.com/samples/ebook/epub/Sway.epub',
+                      'https://zfzqwolxrejrzidhmsai.supabase.co/storage/v1/object/public/pages/books/clu4el3dz000111hpw1qxkfoz.epub',
                       'https://filesamples.com/samples/ebook/epub/Alices%20Adventures%20in%20Wonderland.epub',
                       'https://filesamples.com/samples/ebook/epub/sample1.epub',
                     ]
@@ -148,6 +149,7 @@ class EpubState extends State<EpubWidget> {
 Widget buildEpubWidget(epub.EpubBookRef book) {
   var chapters = book.getChapters();
   var cover = book.readCover();
+
   return Container(
       child: Column(
     children: <Widget>[
@@ -211,9 +213,68 @@ Widget buildEpubWidget(epub.EpubBookRef book) {
           return Container();
         },
       ),
+      FutureBuilder<String>(
+          future: buildBlackValleyComicsContent(book),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Text('An error has occurred');
+            }// end if
+
+            if (snapshot.hasData) {
+              return HtmlWidget(snapshot.data!, renderMode: RenderMode.column,);
+            }else {
+              return CircularProgressIndicator();
+            }// end if-else
+          } // end if-else
+      ),
     ],
   ));
 }
+
+Future<List<String>> extractHtmlChapters(epub.EpubBookRef book) async {
+  final chapters = await book.getChapters();
+  return Future.wait(chapters.map((chapter) => chapter.readHtmlContent()));
+} // end extract html chapters
+
+Widget buildContentViewer (String htmlContent) {
+  return HtmlWidget(
+    htmlContent,
+  );
+}// end content viewer
+
+Future<String> buildBlackValleyComicsContent(epub.EpubBookRef book) async {
+  // START BUILDING HTML CONTENT
+  final htmlBuffer = StringBuffer(
+    '<html><body style="display: flex; flex-direction:column; align-items:center;>'
+  );
+  //  LOOPING THROUGH THE CONTENT
+  final content = book?.Content;
+  final images = content?.Images;
+
+  //  EMBEDDING THE IMAGES
+  if (images != null) {
+    for (final imageEntry in images.entries) {
+      final imageKey = imageEntry.key;
+      final imageFileRef = await imageEntry.value;
+
+      //  READ BINARY DATA
+      final imageData = await imageFileRef.readContentAsBytes();
+      if (imageData != null) {
+        // Convert binary content to Base64
+        final base64Data = base64Encode(imageData);
+        final mimeType = imageFileRef.ContentMimeType ?? 'image/*';
+
+        // Embed image in HTML
+        htmlBuffer.writeln(
+            '<img src="data:$mimeType;base64,$base64Data" alt="$imageKey" style="max-width: 100%; margin: 10px 0;" />');
+      }//end if
+
+    }// end for loop
+  }
+
+  htmlBuffer.writeln('</body></html>');
+  return htmlBuffer.toString();
+} // end function
 
 // Needs a url to a valid url to an epub such as
 // https://www.gutenberg.org/ebooks/11.epub.images

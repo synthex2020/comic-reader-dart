@@ -105,8 +105,15 @@ class PackageReader {
           throw Exception('Incorrect EPUB manifest: item href is missing');
         }
         if (manifestItem.MediaType == null || manifestItem.MediaType!.isEmpty) {
-          throw Exception(
-              'Incorrect EPUB manifest: item media type is missing');
+          //  IF HREF HAS SUPA-BASE ADD MEDIA TYPE PNG
+          print('Incorrect EPUB manifest: item media type is missing');
+          if (manifestItem.Href!.contains('images/')) {
+            manifestItem.MediaType = 'image/png';
+          }else{
+            throw Exception('EPUB Manifest Error: Href does not contain images/');
+          }
+          // throw Exception(
+          //     'Incorrect EPUB manifest: item media type is missing');
         }
         result.Items!.add(manifestItem);
       }

@@ -31,11 +31,21 @@ class EpubViewer extends StatefulWidget {
 
 class _EpubViewerState extends State<EpubViewer> {
 
+  //   SVG ICONS
+
+  String nextPageIcon = '';
+  String prevPageIcon = '';
+  String languagesOptionsIcon = '';
+  String landscapeIcon = '';
+  String portraitIcon = '';
+
   //  EPUB - Current epub book
 
   //  EPUB URI - Next issue
 
   //  EPUB URI - Prev issue
+
+
 
   //  change theme
 
@@ -52,12 +62,13 @@ class _EpubViewerState extends State<EpubViewer> {
     //  SET NEXT AND PREV ISSUES
     //  DETERMINE THE THEME IN PLACE
     super.initState();
-  }
+  } // end init
 
   @override
   Widget build(BuildContext context) {
     return const Placeholder();
-  }
+  }//end build
+
 } // end class
 
 
@@ -68,7 +79,7 @@ class EpubBook {
 
   EpubBook({required this.ebookUri});
 
-//  PRIVATE METHODS
+  //  PRIVATE METHODS
 
   //  fetch book
   Future<EpubBookRef> fetchBook(String url) async {
@@ -162,7 +173,7 @@ class EpubBook {
     return htmlBuffer.toString();
   } // end build string buffer
 
-//  PUBLIC METHODS
+  //  PUBLIC METHODS
 
   //  change orientation
 

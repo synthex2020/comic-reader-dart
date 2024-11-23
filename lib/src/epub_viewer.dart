@@ -13,16 +13,13 @@ import 'ref_entities/epub_book_ref.dart';
 
 //  A Zoomable stateful widget - can change between chapters, languages, volumes
 class EpubViewer extends StatefulWidget {
-  final EpubBook book;
-  //  THE LIST OF ISSUES THE BOOK HAS THAT IS FOR NEXT ISSUE AND PREV ISSUE
-  final List<String> issues;
   //  INITIAL THEME
   final bool isDarkMode;
-
+  final String epubUri;
 
   const EpubViewer({
-    super.key, required this.book, required this.issues,
-    required this.isDarkMode
+    super.key, required this.isDarkMode,
+    required this.epubUri
   });
 
   @override
@@ -40,18 +37,13 @@ class _EpubViewerState extends State<EpubViewer> {
   String portraitIcon = '';
 
   //  EPUB - Current epub book
-
-  //  EPUB URI - Next issue
-
-  //  EPUB URI - Prev issue
-
-
+  EpubBookReference? book;
 
   //  change theme
 
-  //  next issue button ( takes epub url )
+  //  next page button
 
-  //  previous issue button ( takes epub url )
+  //  previous page button
 
   //  change language button ( fetch new epub url with needed language)
 
@@ -59,42 +51,95 @@ class _EpubViewerState extends State<EpubViewer> {
   void initState() {
     // TODO: implement initState
     //  SET CURRENT EPUB BOOK
+    book = EpubBookReference(ebookUri: widget.epubUri);
     //  SET NEXT AND PREV ISSUES
     //  DETERMINE THE THEME IN PLACE
+
     super.initState();
   } // end init
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    var width = MediaQuery.of(context).size.width;
+    var height = MediaQuery.of(context).size.height;
+    var boolean = widget.isDarkMode;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Reader'),
+        elevation: 8,
+      ),
+      backgroundColor: Colors.white,
+      body: Container(
+        height: height,
+        width: width,
+        child: InteractiveViewer(
+            minScale: 0.6,
+            maxScale: 1.6,
+            boundaryMargin: const EdgeInsets.all(20),
+            child: Padding(
+          padding: EdgeInsets.all(width/80),
+          child: SingleChildScrollView(
+            child: FutureBuilder<EpubBookRef>(
+                future: book!.fetchBook(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Text('An error occurred when fetching epub file. ${snapshot.error}');
+                  }// end if
+
+                  if (snapshot.hasData) {
+                    return FutureBuilder<Widget>(
+                        future: book!.buildWidgetBuilderDefault(snapshot.data) ,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return Text('Error building with html widget ${snapshot.error}');
+                          }//end if
+
+                          if (snapshot.hasData) {
+                            return snapshot.data ?? Container();
+                          }else{
+                            return CircularProgressIndicator();
+                          }// end if-else
+                        } // end builder
+                    );
+                  }else{
+                    return CircularProgressIndicator();
+                  }// end if-else
+                }// end builder
+            ),
+          ),
+        )
+        ),
+      ),
+    );
   }//end build
 
 } // end class
 
 
-class EpubBook {
+class EpubBookReference {
   /// This class holds our final viewer and is optimized for comic based epubs
   /// [TAKES ARGS - STRING - > EBOOK URI ]
   final String ebookUri;
 
-  EpubBook({required this.ebookUri});
+  EpubBookReference({required this.ebookUri});
 
   //  PRIVATE METHODS
 
   //  fetch book
-  Future<EpubBookRef> fetchBook(String url) async {
+  Future<EpubBookRef> fetchBook() async {
     //  FETCH THE EBOOK FROM URL
-    final response = await http.get(Uri.parse(url));
+    final response = await http.get(Uri.parse(ebookUri));
 
     if (response.statusCode == 200 ) {
       return EpubReader.openBook(response.bodyBytes);
     }else{
-      throw Exception('Failed to load epub from url: $url');
+      throw Exception('Failed to load epub from url: $ebookUri');
     } // end if - else
   } // end fetch book
   //  epub widget builder
-  Future<Widget> buildWidgetBuilderDefault (EpubBookRef book) async {
-    var cover = book.readCover();
+  Future<Widget> buildWidgetBuilderDefault (EpubBookRef? book) async {
+    var cover = book!.readCover();
     return Column(
       children: [
         //  COVER IF ONE IS THERE
@@ -137,8 +182,8 @@ class EpubBook {
     );
   } // end build widget builder
 
-  //  epub widget builder for horizontal viewer
-
+  //  epub widget builder for horizontal viewer ( Rendition object )
+  // (http://epubjs.org/documentation/0.3/#rendition)
   //  build string buffer
   Future<String> buildStringBuffer(EpubBookRef epubBookRef) async {
     // START BUILDING HTML CONTENT
@@ -172,9 +217,5 @@ class EpubBook {
     htmlBuffer.writeln('</body></html>');
     return htmlBuffer.toString();
   } // end build string buffer
-
-  //  PUBLIC METHODS
-
-  //  change orientation
 
 }// end class

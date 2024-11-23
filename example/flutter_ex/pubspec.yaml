@@ -4,7 +4,7 @@ publish_to: none
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.17.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -13,7 +13,7 @@ dependencies:
   epubx:
     path: ../../
   # To get the epub from the internet
-  http:  ^0.13.4
+  http: 1.2.2
   image: ^4.0.17
   flutter_widget_from_html: ^0.15.3
 

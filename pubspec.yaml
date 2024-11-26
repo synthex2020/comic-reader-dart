@@ -14,8 +14,8 @@ dependencies:
   xml: ^6.0.1
   image: ^4.0.17
   collection: ^1.15.0
-  flutter_widget_from_html: ^0.15.3
   flutter_svg: ^2.0.15
+  webview_flutter: ^4.10.0
 
 dev_dependencies:
   test: ^1.16.7

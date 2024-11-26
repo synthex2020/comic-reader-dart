@@ -36,10 +36,24 @@ class EpubState extends State<EpubWidget> {
       title: "Fetch Epub Example",
       theme: ThemeData.light(),
       darkTheme: ThemeData.dark(),
-      home: epub.EpubViewer(
-          isDarkMode: false,
-          epubUri: 'https://zfzqwolxrejrzidhmsai.supabase.co/storage/v1/object/public/pages/books/clu4el3dz000111hpw1qxkfoz.epub'
+      // home: epub.EpubViewer(
+      //     isDarkMode: false,
+      //     isVertical: true,
+      //     epubUri: 'https://zfzqwolxrejrzidhmsai.supabase.co/storage/v1/object/public/pages/books/clu4el3dz000111hpw1qxkfoz.epub'
+      // )
+      home: FutureBuilder<Widget>(
+          future: epub.EpubViewManager(
+              ebookUri: 'https://zfzqwolxrejrzidhmsai.supabase.co/storage/v1/object/public/pages/books/clu4el3dz000111hpw1qxkfoz.epub',
+              isVertical: true).buildWidgetBuilderHorizontal(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return snapshot.data!;
+            }else{
+              return CircularProgressIndicator();
+            }//end if - else
+          }
       )
+
     );
   }
 }

@@ -65,26 +65,25 @@ class EpubViewManager {
   // (http://epubjs.org/documentation/0.3/#rendition)
   Future<String> buildStringBufferForHorizontal (EpubBookRef epubBookRef) async {
     final htmlBuffer = StringBuffer(
-        '<html lang="eng">'
+        '<html lang="en">'
             '<head>'
+            '<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">'
             '<style>'
-            '  body { margin: 0; padding: 0; overflow: hidden; }'
-            '  .horizontal-container {'
-            '    display: flex;'
-            '    flex-direction: row;'
-            '    overflow-x: auto;'
-            '    white-space: nowrap;'
-            '    align-items: center;'
-            '    justify-content: center;' // Center-align content
-            '    height: 100vh;'
-            '    box-sizing: border-box;' // Viewport height for container
-            '  }'
-            '  .horizontal-container img {'
-            '    max-height: 100%;' // Image fits within the container's height
-            '    height: auto;'     // Maintains aspect ratio
-            '    margin: 0 10px;'   // Adds spacing between images
-            '    object-fit: contain;' // Prevents cropping/stretching
-            '  }'
+            'body { margin: 0; padding: 0; overflow: hidden; display: flex; flex-direction: column; }'
+            '.horizontal-container {'
+            '  display: flex;'
+            '  flex-direction: row;'
+            '  overflow-x: auto;'
+            '  white-space: nowrap;'
+            '  align-items: center;'
+            '  height: 100vh;'
+            '  box-sizing: border-box;'
+            '}'
+            '.horizontal-container img {'
+            '  max-height: 100%;'
+            '  margin: 0 10px;'
+            '  object-fit: contain;'
+            '}'
             '</style>'
             '</head>'
             '<body>'

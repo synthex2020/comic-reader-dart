@@ -1,11 +1,8 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
-import 'package:image/image.dart' as image;
-import 'package:epubx/epubx.dart' as epub;
+import 'package:epub_comic_reader/epubx.dart' as epub;
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 import '../epub_reader.dart';
 import '../ref_entities/epub_book_ref.dart';
 

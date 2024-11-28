@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:archive/archive.dart';
 import 'dart:convert' as convert;
 import 'package:collection/collection.dart' show IterableExtension;
-import 'package:epubx/src/schema/opf/epub_version.dart';
+import 'package:epub_comic_reader/src/schema/opf/epub_version.dart';
 import 'package:xml/xml.dart' as xml;
 import 'package:path/path.dart' as path;
 

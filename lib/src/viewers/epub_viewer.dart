@@ -12,16 +12,46 @@ import '../ref_entities/epub_book_ref.dart';
 //  TODO: RE-LOOK WEB VIEW INTEGRATION IN MAIN IMPLEMENTATION ON THE BASIS OF DISPLAYING A HTML STRING
 
 class EpubViewManager {
-  /// This class holds our final viewer and is optimized for comic based epubs
-  /// [TAKES ARGS - STRING - > EBOOK URI , BOOL - ORIENTATION ]
-  final String ebookUri;
-  final bool isVertical;
 
-  //  WEB-VIEW CONTROLLER
+  /// This class holds our final viewer and is optimized for comic based epubs
+  /// TAKES ARGS ->
+  /// [
+  /// EBOOK URI (String) ,
+  /// TITLE (String), APP BAR THEME (AppBarTheme),
+  /// IS LIGHT MODE? (Bool), CHANGE APP BAR THEME? (Function()),
+  /// DROP DOWN ITEM LIST? (List<String>), DROP DOWN BUTTON ICON? (Widget?),
+  /// INITIAL VALUE? (String) , ON DROP DOWN ITEM SELECTED (Function(String? value)),
+  /// ]
+
+  //  EBOOK URI
+  final String ebookUri;
+  //  TITLE
+  final String title;
+  //  APP BAR THEME
+  final AppBarTheme appBarTheme;
+  //  IS LIGHT MODE
+  final bool? isLightMode;
+  //  CHANGE APP BAR
+  final Function()? changeAppBarTheme;
+  //  DROP DOWN ITEM LIST
+  final List<String>? dropDownItemList;
+  //  DROP DOWN BUTTON ICON
+  final Widget? dropDownButtonIcon;
+  //  INITIAL VALUE
+  final String? initialValue;
+  //  ON DROP DOWN ITEM SELECTED
+  final Function(String? value)? onDropDownItemSelected;
 
   EpubViewManager({
     required this.ebookUri,
-    required this.isVertical
+    required this.title,
+    required this.appBarTheme,
+    this.isLightMode,
+    this.changeAppBarTheme,
+    this.dropDownItemList,
+    this.dropDownButtonIcon,
+    this.initialValue,
+    this.onDropDownItemSelected
   });
 
   //  PRIVATE METHODS
@@ -45,7 +75,17 @@ class EpubViewManager {
     var book = await fetchBook();
     var htmlString = await buildStringBuffer(book);
 
-    return epub.WebViewStack(htmlString: htmlString);
+    return epub.WebViewStack(
+      htmlString: htmlString,
+      title: title,
+      appBarTheme: appBarTheme,
+      isLightMode: isLightMode,
+      changeAppBarTheme: changeAppBarTheme,
+      dropDownItemList: dropDownItemList,
+      dropDownButtonIcon: dropDownButtonIcon,
+      initialValue: initialValue,
+      onDropDownItemSelected: onDropDownItemSelected,
+    );
   } // end build widget builder
 
   //  epub build horizontal scrolling widget
@@ -55,7 +95,17 @@ class EpubViewManager {
     //  GET THE HTML STRING
     var htmlString = await buildStringBufferForHorizontal(book);
     //  RETURN THE RELEVANT WIDGET
-    return epub.WebViewStack(htmlString: htmlString);
+    return epub.WebViewStack(
+      htmlString: htmlString,
+      title: title,
+      appBarTheme: appBarTheme,
+      isLightMode: isLightMode,
+      changeAppBarTheme: changeAppBarTheme,
+      dropDownItemList: dropDownItemList,
+      dropDownButtonIcon: dropDownButtonIcon,
+      initialValue: initialValue,
+      onDropDownItemSelected: onDropDownItemSelected,
+    );
   } // end build widget builder horizontal
 
   //  epub widget builder for horizontal viewer ( Rendition object )
@@ -112,10 +162,31 @@ class EpubViewManager {
 
   //  build string buffer
   Future<String> buildStringBuffer(EpubBookRef epubBookRef) async {
-    // START BUILDING HTML CONTENT
+    // START BUILDING HTML CONTENT TODO: ADJUST FOR VERTICAL DIRECTION
     final htmlBuffer = StringBuffer(
-        '<html><body style="display: flex; flex-direction:column; align-items:center;>'
-    );
+        '<html lang="en">'
+            '<head>'
+            '<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">'
+            '<style>'
+            'body { margin: 0; padding: 0; overflow: hidden; display: flex; flex-direction: column; }'
+            '.vertical-container {'
+            '  display: flex;'
+            '  flex-direction: col;'
+            '  overflow-x: auto;'
+            '  white-space: nowrap;'
+            '  align-items: center;'
+            '  height: 100vh;'
+            '  box-sizing: border-box;'
+            '}'
+            '.vertical-container img {'
+            '  max-height: 100%;'
+            '  margin: 0 10px;'
+            '  object-fit: contain;'
+            '}'
+            '</style>'
+            '</head>'
+            '<body>'
+            '<div class="vertical-container">');
     //  LOOPING THROUGH THE CONTENT
     final content = epubBookRef.Content;
     final images = content?.Images;
@@ -140,7 +211,7 @@ class EpubViewManager {
       }// end for loop
     }
 
-    htmlBuffer.writeln('</body></html>');
+    htmlBuffer.writeln('</div></body></html>');
     return htmlBuffer.toString();
   } // end build string buffer
 

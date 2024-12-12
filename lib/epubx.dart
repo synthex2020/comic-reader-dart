@@ -1,7 +1,7 @@
 library epub_comic_reader;
 
 export 'src/utils/enum_from_string.dart';
-
+export 'src/utils/orientation_utils.dart';
 export 'src/epub_reader.dart';
 export 'src/epub_writer.dart';
 export 'src/viewers/epub_viewer.dart';

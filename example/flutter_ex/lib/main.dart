@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:epubx/epubx.dart' as epub;
+import 'package:epub_comic_reader/epubx.dart' as epub;
 import 'package:image/image.dart' as image;
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
@@ -43,8 +43,21 @@ class EpubState extends State<EpubWidget> {
       // )
       home: FutureBuilder<Widget>(
           future: epub.EpubViewManager(
-              ebookUri: 'https://zfzqwolxrejrzidhmsai.supabase.co/storage/v1/object/public/pages/books/clu4el3dz000111hpw1qxkfoz.epub',
-              isVertical: true).buildWidgetBuilderHorizontal(),
+            // TODO:  REMOVE URI - ( .env )
+            ebookUri: '',
+            title: 'Testing 001',
+            appBarTheme: AppBarTheme(),
+            isLightMode: true,
+            changeAppBarTheme: () {
+              print('Change app bar theme');
+            },
+            dropDownItemList: <String>['One', 'Two', 'Three'],
+            dropDownButtonIcon: Icon(Icons.settings),
+            initialValue: 'One',
+            onDropDownItemSelected: (String? string) {
+              print('Item selected ${string.toString()}');
+            }
+          ).renderEbookReader(false),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return snapshot.data!;

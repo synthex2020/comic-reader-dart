@@ -139,6 +139,7 @@ class _WebViewStackState extends State<WebViewStack> {
     });
   } // end show floating action button
 
+
   @override
   void initState() {
     //  implement initState
@@ -306,7 +307,7 @@ class _WebViewStackState extends State<WebViewStack> {
         ],
       ),
       floatingActionButton: Offstage(
-        offstage: showFloatingActionButton,
+        offstage: !showFloatingActionButton,
         child: FloatingActionButton(
           onPressed: () => switchOrientation(),
           child: isVertical

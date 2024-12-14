@@ -1,6 +1,6 @@
 /// STRUCTURE
 ///  [OPEN WEB-VIEW OF READ EPUB FROM URI]
-import 'package:epub_comic_reader/epubx.dart' as reader;
+import 'package:epub_comic_reader/epub_comic_reader.dart' as reader;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -177,7 +177,8 @@ class _WebViewStackState extends State<WebViewStack> {
               } // end on navigation request
           ))
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..loadHtmlString(widget.htmlString);
+      ..loadHtmlString(widget.htmlString)
+      ..enableZoom(true);
     //  DEFAULT ORIENTATION
     isVertical = widget.defaultOrientation;
     //  DEFAULT DROP DOWN BUTTON ASPECTS
@@ -212,6 +213,9 @@ class _WebViewStackState extends State<WebViewStack> {
     //  REQUIRED VARIABLES
     appBarTheme = widget.appBarTheme;
 
+    //  DROP DOWN VALUE
+    selectedItem = widget.initialValue ?? '';
+
   }//end init state
 
   @override
@@ -223,7 +227,20 @@ class _WebViewStackState extends State<WebViewStack> {
     return Scaffold(
       appBar: displayAppBar ? AppBar(
         title: Text(widget.title),
+        shape: appBarTheme?.shape,
+        centerTitle: appBarTheme?.centerTitle,
+        elevation: appBarTheme?.elevation,
+        systemOverlayStyle: appBarTheme?.systemOverlayStyle,
+        toolbarTextStyle: appBarTheme?.toolbarTextStyle,
+        titleTextStyle: appBarTheme?.titleTextStyle,
+        titleSpacing: appBarTheme?.titleSpacing,
+        iconTheme: appBarTheme?.iconTheme,
+        actionsIconTheme: appBarTheme?.actionsIconTheme,
+        toolbarHeight: appBarTheme?.toolbarHeight,
+        shadowColor: appBarTheme?.shadowColor,
+        surfaceTintColor: appBarTheme?.surfaceTintColor,
         backgroundColor: appBarTheme?.backgroundColor,
+        foregroundColor: appBarTheme?.foregroundColor,
         actions: [
 
           //  THEME SELECTION
@@ -251,23 +268,42 @@ class _WebViewStackState extends State<WebViewStack> {
           onDropDownItemSelected != null 
               ? Padding(
                   padding: EdgeInsets.fromLTRB(0.0, 0.0, width/40, 0.0),
-                  child: DropdownButton(
-                      items: ['One','Two','Three'].map((String item) {
-                        return DropdownMenuItem(
-                            value: item,
-                            child: Text(item)
-                        );
-                      }).toList(),
-                      onChanged: (String? language) {
-                        setState(() {
-                          selectedItem = language ?? 'ERROR';
-                          onDropDownItemSelected!(language);
-                        });
-                      },
-                      icon: dropDownButtonIcon,
-                      underline: const SizedBox(),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      //  ICON
+                      Expanded(
+                        flex: 5 ,
+                        child: DropdownButton(
+                        items: ['One','Two','Three'].map((String item) {
+                          return DropdownMenuItem(
+                              value: item,
+                              child: Text(item)
+                          );
+                        }).toList(),
+                        onChanged: (String? language) {
+                          setState(() {
+                            selectedItem = language ?? 'ERROR';
+                            onDropDownItemSelected!(language);
+                          });
+                        },
+                        icon: dropDownButtonIcon,
+                        underline: const SizedBox(),
 
-                  ),
+                      ),
+                      ),
+                      //  VALUE
+                      Expanded(
+                          flex: 3,
+                          child: Padding(
+                              padding: EdgeInsets.fromLTRB(width/10, 0.0, 0.0, 0.0),
+                              child: Text(selectedItem),
+                          )
+                      )
+
+                    ],
+                  )
               )
               : Container(),
         ],
@@ -293,7 +329,7 @@ class _WebViewStackState extends State<WebViewStack> {
           // Transparent GestureDetector overlay
           GestureDetector(
             behavior: HitTestBehavior.translucent, // Ensures taps pass through transparent areas
-            onTap: () {
+            onDoubleTap: () {
               if (!isScrolling) {
                 setFullScreen();
               }

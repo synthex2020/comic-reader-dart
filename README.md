@@ -10,7 +10,7 @@ To use the package we first must call an instance of the package.
 
 ### Basic Usage 
 ```dart
-import 'package:epub_comic_reader/epubx.dart' as reader;
+import 'package:epub_comic_reader/epub_comic_reader.dart' as reader;
 
 return FutureBuilder<Widget>(
     future: epub.EpubViewManager(

@@ -1,7 +1,7 @@
 import 'dart:io' as io;
 
 import 'package:path/path.dart' as path;
-import 'package:epubx/epubx.dart';
+import 'package:epubx/epub_comic_reader.dart';
 
 main(List<String> args) async {
   //Get the epub into memory somehow

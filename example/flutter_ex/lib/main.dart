@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:epub_comic_reader/epubx.dart' as epub;
+import 'package:epub_comic_reader/epub_comic_reader.dart' as epub;
 import 'package:image/image.dart' as image;
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
@@ -54,6 +54,7 @@ class EpubState extends State<EpubWidget> {
           ).renderEbookReader(false),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
+
               return snapshot.data!;
             }else{
               return CircularProgressIndicator();

@@ -47,13 +47,19 @@ class TutorialUtility {
       result.add(TargetFocus(
         identify: indexKey['identify'],
         keyTarget: indexKey['globalKey'],
+        radius: MediaQuery.of(context).size.width/8,
         contents: [
+          //   CHECK IF TARGET IS ON APP BAR IF SO CONTENT ALIGN BOTTOM ( INDEX_0 -> 2)
           TargetContent(
-            align: ContentAlign.top,
+            align: key == 'index_0' || key == 'index_1'|| key == 'index_2'
+                ? ContentAlign.bottom
+                : ContentAlign.top,
             child: Container(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: key == 'index_2'
+                    ? CrossAxisAlignment.end
+                    : CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
                     indexKey['title'],
@@ -90,6 +96,7 @@ class TutorialUtility {
     return TutorialCoachMark(
       targets: targets,
       colorShadow: shadowColor,
+      alignSkip: Alignment.bottomLeft,
       onClickTarget: onClickTarget != null
           ? (target) => onClickTarget(target)
           : (target) => print(target),

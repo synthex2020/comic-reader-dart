@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:epub_comic_reader/epub_comic_reader.dart' as epub;
 import 'package:image/image.dart' as image;
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'example_reader.dart';
 
 void main() => runApp(EpubWidget());
 
@@ -36,30 +37,9 @@ class EpubState extends State<EpubWidget> {
       title: "Fetch Epub Example",
       theme: ThemeData.light(),
       darkTheme: ThemeData.dark(),
-      home: FutureBuilder<Widget>(
-          future: epub.EpubViewManager(
-            ebookUri: '',
-            title: 'Testing 001',
-            appBarTheme: AppBarTheme(),
-            isLightMode: true,
-            changeAppBarTheme: () {
-              print('Change app bar theme');
-            },
-            dropDownItemList: <String>['One', 'Two', 'Three'],
-            dropDownButtonIcon: Icon(Icons.settings),
-            initialValue: 'One',
-            onDropDownItemSelected: (String? string) {
-              print('Item selected ${string.toString()}');
-            }
-          ).renderEbookReader(false),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-
-              return snapshot.data!;
-            }else{
-              return CircularProgressIndicator();
-            }//end if - else
-          }
+      home: Scaffold(
+        backgroundColor: Colors.white,
+        body: ExampleReader(),
       )
 
     );

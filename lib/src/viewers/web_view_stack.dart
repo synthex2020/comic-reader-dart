@@ -14,6 +14,8 @@ class WebViewStack extends StatefulWidget {
   final AppBarTheme appBarTheme;
   //  DEFAULT ORIENTATION
   final bool defaultOrientation;
+  //  AN INSTANCE OF READER
+  final reader.EpubViewManager readerInstance;
   //  IS-LIGHT MODE
   final bool? isLightMode;
   //  CHANGE THEME FUNCTION - NULLABLE
@@ -33,13 +35,13 @@ class WebViewStack extends StatefulWidget {
     required this.title,
     required this.appBarTheme,
     required this.defaultOrientation,
+    required this.readerInstance,
     this.dropDownItemList,
     this.dropDownButtonIcon,
     this.initialValue,
     this.changeAppBarTheme,
     this.onDropDownItemSelected,
-    this.isLightMode
-
+    this.isLightMode,
   });
 
   @override
@@ -56,8 +58,14 @@ class _WebViewStackState extends State<WebViewStack> {
   bool displayFullScreenButton = true;
   bool isScrolling = false;
   bool isVertical = true;
-  bool showFloatingActionButton = false;
+  bool showFloatingActionButton = true;
   String selectedItem = '';
+
+  GlobalKey titleKey = GlobalKey();
+  GlobalKey themeKey = GlobalKey();
+  GlobalKey dropDownKey = GlobalKey();
+  GlobalKey orientationKey = GlobalKey();
+  GlobalKey screenKey = GlobalKey();
   
 
   bool? isLightMode;
@@ -215,7 +223,19 @@ class _WebViewStackState extends State<WebViewStack> {
 
     //  DROP DOWN VALUE
     selectedItem = widget.initialValue ?? '';
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      //  SET UP GLOBAL KEYS
+      widget.readerInstance.setGlobalKeys(
+          titleKey,
+          themeKey,
+          dropDownKey,
+          orientationKey,
+          screenKey
+      );
 
+      print(titleKey.currentContext.toString());
+      print(widget.readerInstance.appBarTitleKey.currentContext.toString());
+    });
   }//end init state
 
   @override
@@ -226,7 +246,7 @@ class _WebViewStackState extends State<WebViewStack> {
     //  FLOATING BUTTON - SHOW ON LONG PRESS
     return Scaffold(
       appBar: displayAppBar ? AppBar(
-        title: Text(widget.title),
+        title: Text(widget.title, key: titleKey,),
         shape: appBarTheme?.shape,
         centerTitle: appBarTheme?.centerTitle,
         elevation: appBarTheme?.elevation,
@@ -258,6 +278,7 @@ class _WebViewStackState extends State<WebViewStack> {
                   changeAppBar!();
                 });
               },
+              key: themeKey,
               icon: isLightMode!
                   ? Icon(Icons.light_mode_outlined)
                   : Icon(Icons.dark_mode_outlined)
@@ -269,6 +290,7 @@ class _WebViewStackState extends State<WebViewStack> {
               ? Padding(
                   padding: EdgeInsets.fromLTRB(0.0, 0.0, width/40, 0.0),
                   child: Column(
+                    key: dropDownKey,
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -340,11 +362,20 @@ class _WebViewStackState extends State<WebViewStack> {
             LinearProgressIndicator(
               value: loadingPercent/100.0,
             ),
+          Positioned.fill(child: Align(
+            alignment: Alignment.center,
+            child: Container(
+              key: screenKey,
+              width: width/5,
+              height: height/8,
+            ),
+          ))
         ],
       ),
       floatingActionButton: Offstage(
         offstage: !showFloatingActionButton,
         child: FloatingActionButton(
+          key: orientationKey,
           onPressed: () => switchOrientation(),
           child: isVertical
               ? SvgPicture.string(mobilePortraitSvg, )

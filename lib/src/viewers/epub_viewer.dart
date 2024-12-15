@@ -4,7 +4,6 @@ import 'package:epub_comic_reader/src/utils/tutorial_utility.dart';
 import 'package:http/http.dart' as http;
 import 'package:epub_comic_reader/epub_comic_reader.dart' as epub;
 import 'package:flutter/material.dart';
-import 'package:quiver/pattern.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import '../epub_reader.dart';
 import '../ref_entities/epub_book_ref.dart';
@@ -52,9 +51,74 @@ class EpubViewManager {
     this.dropDownItemList,
     this.dropDownButtonIcon,
     this.initialValue,
-    this.onDropDownItemSelected
+    this.onDropDownItemSelected,
   });
 
+  //  APP BAR TITLE GLOBAL KEY
+  GlobalKey appBarTitleKey = GlobalKey();
+  //  APP BAR ACTION BUTTON THEME GLOBAL KEY
+  GlobalKey appBarActionThemeKey = GlobalKey();
+  //  APP BAR DROP DOWN BUTTON GLOBAL KEY
+  GlobalKey appBarDropDownKey = GlobalKey();
+  //  APP BAR ORIENTATION BUTTON GLOBAL KEY
+  GlobalKey orientationButtonKey = GlobalKey();
+  //  APP BAR FULL SCREEN GLOBAL KEY
+  GlobalKey screenKey = GlobalKey();
+
+  //  TUTORIAL - TITLES AND DESCRIPTIONS
+  String issueTitle = 'The Issue\'s title';
+  String issueDescription = 'This is where you will always find the name of whatever it is you are reading';
+  String themeTitle = 'Theme button switch';
+  String themeDescription = 'Switch between themes here, primarily affects the application bar';
+  String dropDownTitle = 'Change language here';
+  String dropDownDescription = 'Change to a language of your own choosing from the options presented';
+  String orientationTitle = 'Orientation Button';
+  String orientationDescription = 'This button allows you to switch between a vertical reader and a horizontal one. '
+      'Press down on the screen for a few seconds toggle the button ';
+  String screenTitle = 'Full Screen';
+  String screenDescription = 'Double tap the screen to toggle between full screen';
+
+  //  set tutorial properties
+  void setTutorialProperties(
+      String titleLeadingAction,
+      String descriptionLeadingAction,
+      String titleOrientationAction,
+      String descriptionOrientationAction,
+      String titleScreenAction,
+      String descriptionScreen,{
+          String? titleThemeAction,
+          String? descriptionThemeAction,
+          String? titleDropdownAction,
+          String? descriptionDropdownAction
+      }
+      ) {
+    //  SET PROPERTIES THAT ARE NOT NULLABLE
+    issueTitle = titleLeadingAction;
+    issueDescription = descriptionLeadingAction;
+    orientationTitle = titleOrientationAction;
+    orientationDescription = descriptionOrientationAction;
+    screenTitle = titleScreenAction;
+    screenDescription = descriptionScreen;
+
+    //  SET NULLABLE PROPERTIES
+    themeTitle = titleThemeAction ?? themeTitle;
+    themeDescription = descriptionThemeAction ?? themeDescription;
+    dropDownTitle = titleDropdownAction ?? dropDownTitle;
+    dropDownDescription = descriptionDropdownAction ?? dropDownDescription;
+  } // end set tutorial properties
+
+  //  set global keys
+  void setGlobalKeys(
+      GlobalKey appBar, GlobalKey themeButton,
+      GlobalKey dropDown, GlobalKey orientation,
+      GlobalKey screen
+      ) {
+    appBarTitleKey = appBar;
+    appBarActionThemeKey = themeButton;
+    appBarDropDownKey = dropDown;
+    orientationButtonKey = orientation;
+    screenKey = screen;
+  } // end set global keys
   //  render Ebook
   Future<Widget>  renderEbookReader(bool defaultOrientation) async {
     if (defaultOrientation) {
@@ -95,6 +159,7 @@ class EpubViewManager {
       dropDownButtonIcon: dropDownButtonIcon,
       initialValue: initialValue,
       onDropDownItemSelected: onDropDownItemSelected,
+      readerInstance: this,
     );
   } // end build widget builder
 
@@ -116,6 +181,7 @@ class EpubViewManager {
       dropDownButtonIcon: dropDownButtonIcon,
       initialValue: initialValue,
       onDropDownItemSelected: onDropDownItemSelected,
+      readerInstance: this,
     );
   } // end build widget builder horizontal
 
@@ -228,10 +294,10 @@ class EpubViewManager {
 
   //  run basic tutorial - app bar has just the title
   void runBasicTutorial (
-      BuildContext context,
-      GlobalKey titleKey,
-      GlobalKey orientationKey,
-      GlobalKey fullScreenKey,{
+      BuildContext context,{
+        GlobalKey? titleKey,
+        GlobalKey? orientationKey,
+        GlobalKey? fullScreenKey,
         Function(TargetFocus target)? onClickTarget,
         Function(TargetFocus target, TapDownDetails tapDownDetails)? onClickTargetWithTapPosition,
         Function(TargetFocus target)? onClickOverlay,
@@ -242,40 +308,39 @@ class EpubViewManager {
 
     var targetMap = <String,dynamic>{
       'index_0' : {
-        'globalKey' : titleKey,
+        'globalKey' : titleKey ?? appBarTitleKey,
         'identify' : 'Target 1',
-        'title' : 'The Issue\'s title',
+        'title' : issueTitle,
         'titleTextStyle' : TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
             fontSize: 20.0
         ),
-        'description' : 'This is where you will always find the name of whatever it is you are reading',
+        'description' : issueDescription,
         'descriptionTextStyle' : TextStyle(color: Colors.white),
       },
-      'index_1' : {
-        'globalKey' : orientationKey,
+      'index_3' : {
+        'globalKey' : orientationKey ?? orientationButtonKey,
         'identify' : 'Target 2',
-        'title' : 'Orientation Button',
+        'title' : orientationTitle,
         'titleTextStyle' : TextStyle(
           fontWeight: FontWeight.bold,
           color: Colors.white,
           fontSize: 20.0
         ),
-        'description' : 'This button allows you to switch between a vertical reader and a horizontal one. '
-            'Press down on the screen for a few seconds toggle the button ',
+        'description' : orientationDescription,
         'descriptionTextStyle' : TextStyle(color: Colors.white)
       },
-      'index_3' : {
-        'globalKey' : fullScreenKey,
+      'index_4' : {
+        'globalKey' : fullScreenKey ?? screenKey,
         'identify' : 'Target 3',
-        'title' : 'Full Screen',
+        'title' : screenTitle,
         'titleTextStyle' : TextStyle(
           fontWeight: FontWeight.bold,
           color: Colors.white,
           fontSize: 20.0
         ),
-        'description' : 'Double tap the screen to toggle between full screen',
+        'description' : screenDescription,
         'descriptionTextStyle' : TextStyle(color: Colors.white)
       }
     };
@@ -303,18 +368,18 @@ class EpubViewManager {
 
   //  run basic type 2 tutorial - app bar has theme + language selection
   void runBasicType2Tutorial (
-      BuildContext context,
-      GlobalKey titleKey,
-      GlobalKey orientationKey,
-      GlobalKey fullScreenKey,
-      GlobalKey themeKey,
-      GlobalKey languageKey, {
+      BuildContext context,{
+        GlobalKey? titleKey,
+        GlobalKey? orientationKey,
+        GlobalKey? fullScreenKey,
+        GlobalKey? themeKey,
+        GlobalKey? languageKey,
         Function(TargetFocus target)? onClickTarget,
         Function(TargetFocus target, TapDownDetails tapDownDetails)? onClickTargetWithTapPosition,
         Function(TargetFocus target)? onClickOverlay,
         bool Function()? onSkip,
         Function()? onFinish
-      }
+        }
       ) {
 
     //  { "index_0" : {} , "index_1" : {}     }
@@ -327,64 +392,63 @@ class EpubViewManager {
 
     var targetMap = <String,dynamic>{
       'index_0' : {
-        'globalKey' : titleKey,
+        'globalKey' : titleKey ?? appBarTitleKey,
         'identify' : 'Target 1',
-        'title' : 'The Issue\'s title',
+        'title' : issueTitle,
         'titleTextStyle' : TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
             fontSize: 20.0
         ),
-        'description' : 'This is where you will always find the name of whatever it is you are reading',
+        'description' : issueDescription,
         'descriptionTextStyle' : TextStyle(color: Colors.white),
       },
       'index_1' : {
-        'globalKey' : themeKey,
+        'globalKey' : themeKey ?? appBarActionThemeKey,
         'identify' : 'Target 2',
-        'title' : 'Theme button switch',
+        'title' : themeTitle,
         'titleTextStyle' : TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
             fontSize: 20.0
         ),
-        'description' : 'Switch between themes here, primarily affects the application bar',
+        'description' : themeDescription,
         'descriptionTextStyle' : TextStyle(color: Colors.white)
       },
       'index_2' : {
-        'globalKey' : languageKey,
+        'globalKey' : languageKey ?? appBarDropDownKey,
         'identify' : 'Target 3',
-        'title' : 'Change language here',
+        'title' : dropDownTitle,
         'titleTextStyle' : TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
             fontSize: 20.0
         ),
-        'description' : 'Change to a language of your own choosing from the options presented',
+        'description' : dropDownDescription,
         'descriptionTextStyling' : TextStyle(color: Colors.white)
       },
       'index_3': {
-        'globalKey' : orientationKey,
+        'globalKey' : orientationKey ?? orientationButtonKey,
         'identify' : 'Target 4',
-        'title' : 'Orientation Button',
+        'title' : orientationTitle,
         'titleTextStyle' : TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
             fontSize: 20.0
         ),
-        'description' : 'This button allows you to switch between a vertical reader and a horizontal one. '
-            'Press down on the screen for a few seconds toggle the button ',
+        'description' : orientationDescription,
         'descriptionTextStyle' : TextStyle(color: Colors.white)
       },
       'index_4' : {
-        'globalKey' : fullScreenKey,
+        'globalKey' : fullScreenKey ?? screenKey,
         'identify' : 'Target 5',
-        'title' : 'Full Screen',
+        'title' : screenTitle,
         'titleTextStyle' : TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
             fontSize: 20.0
         ),
-        'description' : 'Double tap the screen to toggle between full screen',
+        'description' : screenDescription,
         'descriptionTextStyle' : TextStyle(color: Colors.white)
       }
     };
@@ -412,13 +476,12 @@ class EpubViewManager {
   //  run custom tutorial
   void runCustomTutorial (
       BuildContext context,
-      GlobalKey titleKey,
-      GlobalKey themeKey,
-      GlobalKey dropDownKey,
-      GlobalKey orientationKey,
-      GlobalKey fullScreenKey,
       Color shadowColor,
-      Map<String,dynamic> targetMap,{
+      Map<String,dynamic> indexLeading,
+      Map<String,dynamic> indexOrientation,
+      Map<String,dynamic> indexFullScreen,{
+        Map<String,dynamic>? indexActionButtonOne,
+        Map<String,dynamic>? indexActionButtonTwo,
         Function(TargetFocus target)? onClickTarget,
         Function(TargetFocus target, TapDownDetails tapDownDetails)? onClickTargetWithTapPosition,
         Function(TargetFocus target)? onClickOverlay,
@@ -426,6 +489,64 @@ class EpubViewManager {
         Function()? onFinish
       }
       ) {
+
+    //  INDEX TARGETS { title, titleTextStyle, description, descriptionTextStyle,}
+
+    var targetMap = <String,dynamic>{
+      //  INDEX LEADING
+      'index_0' : {
+        'globalKey' : appBarTitleKey,
+        'identify' : 'Target 1',
+        'title' : indexLeading['title'],
+        'titleTextStyle' : indexLeading['titleTextStyle'],
+        'description' : indexLeading['description'],
+        'descriptionTextStyle' : indexLeading['descriptionTextStyle'],
+      },
+      //  ACTION BUTTON ONE
+      'index_1' : {
+        'globalKey' : appBarActionThemeKey,
+        'identify' : 'Target 2',
+        'title' : indexActionButtonOne?['title'] ?? themeTitle ,
+        'titleTextStyle' : indexActionButtonOne?['titleTextStyle'] ?? TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            fontSize: 20.0
+        ),
+        'description' : indexActionButtonOne?['description'] ?? themeDescription,
+        'descriptionTextStyle' : indexActionButtonOne?['descriptionTextStyle'] ?? TextStyle(color: Colors.white)
+      },
+      //  ACTION BUTTON TWO
+      'index_2' : {
+        'globalKey' : appBarDropDownKey,
+        'identify' : 'Target 3',
+        'title' : indexActionButtonTwo?['title'] ?? dropDownTitle,
+        'titleTextStyle' : indexActionButtonTwo?['titleTextStyle'] ?? TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            fontSize: 20.0
+        ),
+        'description' : indexActionButtonTwo?['description'] ?? dropDownDescription,
+        'descriptionTextStyling' : indexActionButtonTwo?['descriptionTextStyle'] ?? TextStyle(color: Colors.white)
+      },
+      //  INDEX ORIENTATION
+      'index_3': {
+        'globalKey' : orientationButtonKey,
+        'identify' : 'Target 4',
+        'title' : indexOrientation['title'],
+        'titleTextStyle' : indexOrientation['titleTextStyle'],
+        'description' : indexOrientation['description'],
+        'descriptionTextStyle' : indexOrientation['descriptionTextStyle']
+      },
+      //  INDEX FULL SCREEN
+      'index_4' : {
+        'globalKey' : screenKey,
+        'identify' : 'Target 5',
+        'title' : indexFullScreen['title'],
+        'titleTextStyle' : indexFullScreen['titleTextStyle'],
+        'description' : indexFullScreen['description'],
+        'descriptionTextStyle' : indexFullScreen['descriptionTextStyle']
+      }
+    };
     //  CREATE TUTORIAL UTILITY
     var utility = TutorialUtility(
         keyTargetsMap: targetMap,

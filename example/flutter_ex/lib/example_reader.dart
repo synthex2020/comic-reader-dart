@@ -17,6 +17,7 @@ class _ExampleReaderState extends State<ExampleReader> {
 
     //  SET UP VIEW MANAGER
     manager = EpubViewManager(
+
         ebookUri: '',
         title: 'Testing 001',
         appBarTheme: AppBarTheme(),
@@ -43,46 +44,46 @@ class _ExampleReaderState extends State<ExampleReader> {
     );
     //  RUN CUSTOM TUTORIAL
 
-    Future.delayed(Duration(seconds: 3), () => manager?.runCustomTutorial(
-        context,
-        Colors.redAccent,
-        {
-          'title' : 'title',
-          'titleTextStyle' : TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              fontSize: 20.0
-          ),
-          'description' : 'description',
-          'descriptionTextStyle' : TextStyle(
-              color: Colors.white,
-          )
-        },
-        {
-          'title' : 'title',
-          'titleTextStyle' : TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              fontSize: 20.0
-          ),
-          'description' : 'description',
-          'descriptionTextStyle' : TextStyle(
-            color: Colors.white,
-          )
-        },
-        {
-          'title' : 'title',
-          'titleTextStyle' : TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              fontSize: 20.0
-          ),
-          'description' : 'description',
-          'descriptionTextStyle' : TextStyle(
-            color: Colors.white,
-          )
-        }
-    ));
+    // Future.delayed(Duration(seconds: 3), () => manager?.runCustomTutorial(
+    //     context,
+    //     Colors.redAccent,
+    //     {
+    //       'title' : 'title',
+    //       'titleTextStyle' : TextStyle(
+    //           fontWeight: FontWeight.bold,
+    //           color: Colors.white,
+    //           fontSize: 20.0
+    //       ),
+    //       'description' : 'description',
+    //       'descriptionTextStyle' : TextStyle(
+    //           color: Colors.white,
+    //       )
+    //     },
+    //     {
+    //       'title' : 'title',
+    //       'titleTextStyle' : TextStyle(
+    //           fontWeight: FontWeight.bold,
+    //           color: Colors.white,
+    //           fontSize: 20.0
+    //       ),
+    //       'description' : 'description',
+    //       'descriptionTextStyle' : TextStyle(
+    //         color: Colors.white,
+    //       )
+    //     },
+    //     {
+    //       'title' : 'title',
+    //       'titleTextStyle' : TextStyle(
+    //           fontWeight: FontWeight.bold,
+    //           color: Colors.white,
+    //           fontSize: 20.0
+    //       ),
+    //       'description' : 'description',
+    //       'descriptionTextStyle' : TextStyle(
+    //         color: Colors.white,
+    //       )
+    //     }
+    // ));
 
   }// end init state
 

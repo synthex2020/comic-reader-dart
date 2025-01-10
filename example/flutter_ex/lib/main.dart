@@ -148,7 +148,7 @@ Future<String> buildBlackValleyComicsContent(epub.EpubBookRef book) async {
     '<html><body style="display: flex; flex-direction:column; align-items:center;>'
   );
   //  LOOPING THROUGH THE CONTENT
-  final content = book?.Content;
+  final content = book.Content;
   final images = content?.Images;
 
   //  EMBEDDING THE IMAGES
@@ -159,15 +159,14 @@ Future<String> buildBlackValleyComicsContent(epub.EpubBookRef book) async {
 
       //  READ BINARY DATA
       final imageData = await imageFileRef.readContentAsBytes();
-      if (imageData != null) {
-        // Convert binary content to Base64
-        final base64Data = base64Encode(imageData);
-        final mimeType = imageFileRef.ContentMimeType ?? 'image/*';
+      // Convert binary content to Base64
+      final base64Data = base64Encode(imageData);
+      final mimeType = imageFileRef.ContentMimeType ?? 'image/*';
 
-        // Embed image in HTML
-        htmlBuffer.writeln(
-            '<img src="data:$mimeType;base64,$base64Data" alt="$imageKey" style="max-width: 100%; margin: 10px 0;" />');
-      }//end if
+      // Embed image in HTML
+      htmlBuffer.writeln(
+          '<img src="data:$mimeType;base64,$base64Data" alt="$imageKey" style="max-width: 100%; margin: 10px 0;" />');
+    //end if
 
     }// end for loop
   }

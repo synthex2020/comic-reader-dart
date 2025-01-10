@@ -1,4 +1,4 @@
-## 4.0.2
+## 4.0.4
 
 - Merge all pull requests
 

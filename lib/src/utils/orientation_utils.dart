@@ -1,3 +1,8 @@
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+
 /// THIS CLASS IS MEANT TO ASSIST IN CHANGING ORIENTATION THROUGH
 /// CLASS SPECIFIC METHODS
 
@@ -64,4 +69,6 @@ class OrientationUtils {
     result = string.replaceAll(horizontalMarker, verticalMarker);
     return result;
   } // end vertical string summon
+
+
 } // end class

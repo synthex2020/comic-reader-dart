@@ -1,6 +1,7 @@
 /// STRUCTURE
 ///  [OPEN WEB-VIEW OF READ EPUB FROM URI]
 import 'package:epub_comic_reader/epub_comic_reader.dart' as reader;
+import 'package:epub_comic_reader/src/viewers/web_view_orientation_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -126,15 +127,18 @@ class _WebViewStackState extends State<WebViewStack> {
         isVertical = false;
       });
       //  SET NEW ORIENTATION
-      var result = reader.OrientationUtils.horizontalStringSummon(widget.htmlString);
-      webViewController?.loadHtmlString(result);
+      var result = widget.readerInstance.changeToHorizontal().whenComplete(() {}).toString();
+      webViewController?.loadFile(result);
     }else{
       setState(() {
         isVertical = true;
       });
-      var result = reader.OrientationUtils.verticalStringSummon(widget.htmlString);
-      webViewController?.loadHtmlString(result);
+      var result = widget.readerInstance.changeToVertical().whenComplete(() {}).toString();
+      webViewController?.loadFile(result);
     }// end if - else
+
+    //  SHOW CASE CHANGE IN ORIENTATION TO THE USER
+    showAdaptiveDialog(context: context, builder: (context) => WebViewOrientationDialog(isVertical: isVertical));
   } // end switch orientation
 
   void switchFloatingActionButton () {
@@ -185,7 +189,7 @@ class _WebViewStackState extends State<WebViewStack> {
               } // end on navigation request
           ))
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..loadHtmlString(widget.htmlString)
+      ..loadFile(widget.htmlString)
       ..enableZoom(true);
     //  DEFAULT ORIENTATION
     isVertical = widget.defaultOrientation;
@@ -238,6 +242,8 @@ class _WebViewStackState extends State<WebViewStack> {
     });
   }//end init state
 
+
+
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
@@ -246,7 +252,11 @@ class _WebViewStackState extends State<WebViewStack> {
     //  FLOATING BUTTON - SHOW ON LONG PRESS
     return Scaffold(
       appBar: displayAppBar ? AppBar(
-        title: Text(widget.title, key: titleKey,),
+        title: SizedBox(width: width/3, child: Row(
+          children: [
+            Expanded(child: Text(widget.title, key: titleKey,))
+          ],
+        ),),
         shape: appBarTheme?.shape,
         centerTitle: appBarTheme?.centerTitle,
         elevation: appBarTheme?.elevation,
@@ -359,10 +369,30 @@ class _WebViewStackState extends State<WebViewStack> {
             onLongPress: () => switchFloatingActionButton(),
           ),
           if (loadingPercent < 100)
-            LinearProgressIndicator(
-              value: loadingPercent/100.0,
-            ),
-          Positioned.fill(child: Align(
+            Positioned.fill(child: Align(
+              alignment: Alignment.center,
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(width/90, 0.0, width/90, 0.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    //  PERCENT VALUE
+                    Text('${loadingPercent.toStringAsFixed(1)}%', style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 25
+                    ),),
+                    SizedBox(height: height/100,),
+                    //  LOADING BAR
+                    LinearProgressIndicator(
+                      value: loadingPercent/100.0,
+                      minHeight: height/50,
+                    )
+                  ],
+                ),
+              ),
+            )),
+          Positioned.fill(
+              child: Align(
             alignment: Alignment.center,
             child: Container(
               key: screenKey,

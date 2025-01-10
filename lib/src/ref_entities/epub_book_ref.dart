@@ -19,6 +19,7 @@ class EpubBookRef {
   List<String?>? AuthorList;
   EpubSchema? Schema;
   EpubContentRef? Content;
+
   EpubBookRef(Archive epubArchive) {
     _epubArchive = epubArchive;
   }
@@ -59,4 +60,25 @@ class EpubBookRef {
   Future<Image?> readCover() async {
     return await BookCoverReader.readBookCover(this);
   }
+
+  void closeBook() {
+    //  clearing up memory
+    //  CLEANING ARCHIVES
+    _epubArchive?.clear().whenComplete(() {
+      _epubArchive = null;
+    });
+    Title = null;
+    Author = null;
+    //  CLEAN LISTS
+    AuthorList?.clear();
+    AuthorList = null;
+    //  CLEAN CONTENT MAPS
+    Schema = null;
+    Content?.AllFiles?.clear();
+    Content?.Html?.clear();
+    Content?.Css?.clear();
+    Content?.Images?.clear();
+    Content?.Fonts?.clear();
+    Content = null;
+  } // end close book
 }

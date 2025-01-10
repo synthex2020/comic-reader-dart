@@ -1,5 +1,8 @@
 import 'dart:convert';
-
+import 'dart:io';
+import 'package:epub_comic_reader/src/utils/orientation_utils.dart';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:epub_comic_reader/src/utils/tutorial_utility.dart';
 import 'package:http/http.dart' as http;
 import 'package:epub_comic_reader/epub_comic_reader.dart' as epub;
@@ -78,6 +81,80 @@ class EpubViewManager {
   String screenTitle = 'Full Screen';
   String screenDescription = 'Double tap the screen to toggle between full screen';
 
+  //  EPUB BOOK REFERENCE
+  EpubBookRef? epubBookRef;
+
+  //  CURRENT HTML STRING
+  String? currentHtmlString;
+
+  //  SAVE EPUB FILE AS HTML TO RENDER
+  Future<String> saveHtmlFile (String htmlString) async {
+    try {
+      // Get the application's document directory
+      final directory = await getApplicationDocumentsDirectory();
+
+      // Create a specific folder for caching EPUB files
+      final epubHtml = Directory('${directory.path}/epub_html');
+      if (!await epubHtml.exists()) {
+        await epubHtml.create(recursive: true);
+      }
+
+      // Define the file path
+      final filePath = '${epubHtml.path}/$title.html';
+
+      // Check if the file already exists
+      final file = File(filePath);
+      if (!await file.exists()) {
+        // Save the file if it doesn't exist
+        file.writeAsStringSync(htmlString);
+      }
+      //  CLEAR UP MEMORY
+      epubBookRef!.closeBook();
+      //  ENSURE GC INIT
+      return filePath;
+    } catch (error) {
+      debugPrint(error.toString());
+      throw Exception(error);
+    }
+  } // end save html file
+
+  Future<String> overwriteHtmlFile (String htmlString) async {
+    // Get the application's document directory
+    final directory = await getApplicationDocumentsDirectory();
+
+    // Create a specific folder for caching EPUB files
+    final epubHtml = Directory('${directory.path}/epub_html');
+    if (!await epubHtml.exists()) {
+      await epubHtml.create(recursive: true);
+    }
+
+    // Define the file path
+    final filePath = '${epubHtml.path}/$title.html';
+
+    final file = File(filePath);
+      // Save the file if it doesn't exist
+    file.writeAsStringSync(htmlString);
+
+    //  CLEAR UP MEMORY
+    epubBookRef!.closeBook();
+    //  ENSURE GC INIT
+    return filePath;
+  }
+  //  SWITCH ORIENTATION
+  Future<String> changeToHorizontal () async {
+    //  CONVERT HTML STRING
+    var result = OrientationUtils.horizontalStringSummon(currentHtmlString!);
+    //  SAVE HTML STRING TO LOCAL
+    return await overwriteHtmlFile(result);
+  } // end change to horizontal
+
+  Future<String> changeToVertical () async {
+    //  CONVERT HTML STRING
+    var result = OrientationUtils.verticalStringSummon(currentHtmlString!);
+    //  SAVE HTML STRING TO LOCAL
+    return await overwriteHtmlFile(result);
+  } // end change to vertical
+
   //  set tutorial properties
   void setTutorialProperties(
       String titleLeadingAction,
@@ -119,26 +196,73 @@ class EpubViewManager {
     orientationButtonKey = orientation;
     screenKey = screen;
   } // end set global keys
+
+  //  save epub file to local user storage
+  Future<String> saveEpubToLocalStorage(List<int> bytes, String filename) async {
+    // Get the application's document directory
+    final directory = await getApplicationDocumentsDirectory();
+
+    // Create a specific folder for caching EPUB files
+    final epubCacheFolder = Directory('${directory.path}/epub_cache');
+    if (!await epubCacheFolder.exists()) {
+      await epubCacheFolder.create(recursive: true);
+    }
+
+    // Define the file path
+    final filePath = '${epubCacheFolder.path}/$filename';
+
+    // Check if the file already exists
+    final file = File(filePath);
+    if (!await file.exists()) {
+      // Save the file if it doesn't exist
+      await file.writeAsBytes(bytes);
+    }
+
+    return filePath;
+  } // end save epub to local storage
+
   //  render Ebook
   Future<Widget>  renderEbookReader(bool defaultOrientation) async {
+    Widget widget;
     if (defaultOrientation) {
       //  RETURN VERTICAL
-      return await buildWidgetBuilderDefault();
+      widget =  await buildWidgetBuilderDefault();
     }else{
       //  RETURN HORIZONTAL
-      return await buildWidgetBuilderHorizontal();
+      widget =  await buildWidgetBuilderHorizontal();
     }// end if-else
+
+    return widget;
   } // end render Ebook reader
   //  fetch book
   Future<EpubBookRef> fetchBook() async {
     //  FETCH THE EBOOK FROM URL
     final response = await http.get(Uri.parse(ebookUri));
+    //  GET APPLICATION DOCUMENT DIRECTORY
+    final directory = await getApplicationDocumentsDirectory();
+    final epubCacheFolder = Directory('${directory.path}/epub_cache');
+    final filePath = '${epubCacheFolder.path}/$title.epub';
 
-    if (response.statusCode == 200 ) {
-      return EpubReader.openBook(response.bodyBytes);
+    //  CHECK IF THE FILE ALREADY EXISTS
+    final file_ = File(filePath);
+    if (await file_.exists()) {
+      //  WE OPEN THE FILE SINCE IT IS ALREADY THERE
+      epubBookRef = await EpubReader.openBook(file_.readAsBytesSync());
+      return epubBookRef!;
     }else{
-      throw Exception('Failed to load epub from url: $ebookUri');
-    } // end if - else
+      //  WE OPEN A FILE AND SAVE IT FROM THE URI
+      if (response.statusCode == 200 ) {
+        //  SAVE THE EPUB DATA LOCALLY
+        final localFilePath = await saveEpubToLocalStorage(response.bodyBytes, '$title.epub');
+        //  OPEN THE SAVED EPUB FILE
+        final file = File(localFilePath);
+        epubBookRef = await EpubReader.openBook(file.readAsBytesSync());
+        return epubBookRef!;
+      }else{
+        throw Exception('Failed to load epub from url: $ebookUri');
+      } // end if - else
+    }// end if-else
+
   } // end fetch book
 
   //  epub widget builder
@@ -147,9 +271,13 @@ class EpubViewManager {
     //  READ BOOK AND GET HTML STRING
     var book = await fetchBook();
     var htmlString = await buildStringBuffer(book);
+    //  SAVE THE HTML FILE TO USER MEMORY -  PERHAPS LOCAL STORAGE
+    var htmlFile  = await saveHtmlFile(htmlString);
+    //  UPDATE CURRENT HTML STRING
+    currentHtmlString = htmlString;
     //  ADD GLOBAL KEYS FOR APP BAR
     return epub.WebViewStack(
-      htmlString: htmlString,
+      htmlString: htmlFile,
       title: title,
       appBarTheme: appBarTheme,
       defaultOrientation: true,
@@ -169,9 +297,13 @@ class EpubViewManager {
     var book = await fetchBook();
     //  GET THE HTML STRING
     var htmlString = await buildStringBufferForHorizontal(book);
+    //  SAVE THE HTML FILE TO USER MEMORY -  PERHAPS LOCAL STORAGE
+    var htmlFile = await saveHtmlFile(htmlString);
+    //  SAVE TO CURRENT HTML STRING
+    currentHtmlString = htmlString;
     //  RETURN THE RELEVANT WIDGET
     return epub.WebViewStack(
-      htmlString: htmlString,
+      htmlString: htmlFile,
       title: title,
       appBarTheme: appBarTheme,
       isLightMode: isLightMode,

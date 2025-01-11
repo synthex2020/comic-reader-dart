@@ -83,6 +83,9 @@ class EpubViewManager {
 
   //  EPUB BOOK REFERENCE
   EpubBookRef? epubBookRef;
+  String? portrait;
+  String? landscape;
+
 
   //  CURRENT HTML STRING
   String? currentHtmlString;
@@ -133,8 +136,14 @@ class EpubViewManager {
 
     final file = File(filePath);
       // Save the file if it doesn't exist
-    file.writeAsStringSync(htmlString);
-
+    if (!await file.exists()) {
+      //  delete old file and add new
+      await file.delete();
+      await file.create(recursive: true);
+      file.writeAsStringSync(htmlString);
+    } else{
+      file.writeAsStringSync(htmlString);
+    }// end if-else
     //  CLEAR UP MEMORY
     epubBookRef!.closeBook();
     //  ENSURE GC INIT
@@ -224,6 +233,10 @@ class EpubViewManager {
   //  render Ebook
   Future<Widget>  renderEbookReader(bool defaultOrientation) async {
     Widget widget;
+
+    // //  ACCESS ROOT BUNDLE FOR SVG FILES
+    // portrait = await rootBundle.loadString('epub_comic_reader/assets/icons/landscape-mobile-lg.svg');
+    // landscape = await rootBundle.loadString('epub_comic_reader/assets/icons/mobile-potrait-lg.svg');
     if (defaultOrientation) {
       //  RETURN VERTICAL
       widget =  await buildWidgetBuilderDefault();

@@ -73,8 +73,10 @@ class _WebViewStackState extends State<WebViewStack> {
   String? initialValue;
   Widget? dropDownButtonIcon;
   bool? defaultOrientation;
+  String? currentHtmlFile;
   List<String>? dropDownItemsList;
   AppBarTheme? appBarTheme;
+
   
   Function()? changeAppBar;
   Function(String? value)? onDropDownItemSelected;
@@ -125,20 +127,33 @@ class _WebViewStackState extends State<WebViewStack> {
     if (isVertical){
       setState(() {
         isVertical = false;
+        //  SET NEW ORIENTATION
+        widget.readerInstance.changeToHorizontal().then((String result) {
+          currentHtmlFile = result;
+        }).whenComplete(() {
+          webViewController?.loadFile(currentHtmlFile!);
+        });
       });
-      //  SET NEW ORIENTATION
-      var result = widget.readerInstance.changeToHorizontal().whenComplete(() {}).toString();
-      webViewController?.loadFile(result);
+
     }else{
       setState(() {
         isVertical = true;
-      });
-      var result = widget.readerInstance.changeToVertical().whenComplete(() {}).toString();
-      webViewController?.loadFile(result);
-    }// end if - else
+        widget.readerInstance.changeToVertical().then((String result) {
+          currentHtmlFile = result;
+        }).whenComplete(() {
+          webViewController?.loadFile(currentHtmlFile!);
+        });
 
+      });
+    }// end if - else
+    webViewController?.reload();
     //  SHOW CASE CHANGE IN ORIENTATION TO THE USER
-    showAdaptiveDialog(context: context, builder: (context) => WebViewOrientationDialog(isVertical: isVertical));
+    showAdaptiveDialog(
+        context: context,
+        builder: (context) => WebViewOrientationDialog(
+          isVertical: isVertical,
+        )
+    );
   } // end switch orientation
 
   void switchFloatingActionButton () {
@@ -189,7 +204,7 @@ class _WebViewStackState extends State<WebViewStack> {
               } // end on navigation request
           ))
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..loadFile(widget.htmlString)
+      ..loadFile(currentHtmlFile ?? widget.htmlString)
       ..enableZoom(true);
     //  DEFAULT ORIENTATION
     isVertical = widget.defaultOrientation;
@@ -242,6 +257,14 @@ class _WebViewStackState extends State<WebViewStack> {
     });
   }//end init state
 
+  @override
+  void dispose() {
+    // implement dispose
+    super.dispose();
+    //  CLEAR CACHE AND LOCAL STORAGE
+    webViewController?.clearCache();
+    webViewController?.clearLocalStorage();
+  }
 
 
   @override

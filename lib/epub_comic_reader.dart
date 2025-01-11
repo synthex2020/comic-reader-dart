@@ -36,4 +36,6 @@ export 'src/schema/navigation/epub_navigation_head_meta.dart';
 export 'src/schema/navigation/epub_navigation_label.dart';
 export 'src/schema/navigation/epub_navigation_map.dart';
 export 'src/schema/navigation/epub_navigation_point.dart';
+export 'src/constant_variables/mobile_landscape_svg.dart';
+export 'src/constant_variables/mobile_portrait_svg.dart';
 export 'package:image/image.dart' show Image;

@@ -713,6 +713,13 @@ class EpubViewManager {
     utility.runTutorial(tutorial);
   } // end run custom tutorial
 
-
+  Future<void> closeReader () async {
+    try {
+      //  CLEAN UP USER MEMORY STORAGE
+    } catch(error) {
+      debugPrint(error.toString());
+      throw Exception(error);
+    }
+  } // end method
 
 }// end class

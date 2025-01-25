@@ -1,3 +1,7 @@
+## 4.0.5
+
+- Fixed local storage issue
+
 ## 4.0.4
 
 - Merge all pull requests

@@ -275,10 +275,10 @@ class _WebViewStackState extends State<WebViewStack> {
     //  FLOATING BUTTON - SHOW ON LONG PRESS
     return Scaffold(
       appBar: displayAppBar ? AppBar(
-        title: SizedBox(width: width/3, child: Row(
-          children: [
-            Expanded(child: Text(widget.title, key: titleKey,))
-          ],
+        title: SizedBox(width: width/2, child: FittedBox(
+          fit: BoxFit.cover,
+          alignment: Alignment.centerLeft,
+          child:  Text(widget.title, key: titleKey,),
         ),),
         shape: appBarTheme?.shape,
         centerTitle: appBarTheme?.centerTitle,

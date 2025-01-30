@@ -50,6 +50,7 @@ class EpubReader {
   /// about the book, notably the [Title], [Author] and [AuthorList].
   /// Additional information is loaded in the [Schema] property such as the
   /// Epub version, Publishers, Languages and more.
+
   static Future<EpubBookRef> openBook(FutureOr<List<int>> bytes) async {
     List<int> loadedBytes;
     if (bytes is Future) {

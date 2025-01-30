@@ -109,6 +109,7 @@ class _WebViewStackState extends State<WebViewStack> {
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
                               </svg>
                              ''';
+  int characterLimit = 20;
 
 
   void setFullScreen() {
@@ -165,6 +166,20 @@ class _WebViewStackState extends State<WebViewStack> {
       }// end if-else
     });
   } // end show floating action button
+
+  bool checkSizeBasedOnActions () {
+    bool result = false;
+
+    if (onDropDownItemSelected == null ) {
+      result = true;
+    } // end if
+
+    if (changeAppBar != null) {
+      result = true;
+    }// end if
+
+    return result;
+  } // end check size based on actions
 
 
   @override
@@ -272,13 +287,18 @@ class _WebViewStackState extends State<WebViewStack> {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
 
-    //  FLOATING BUTTON - SHOW ON LONG PRESS
+    //  FLOATING BUTTON - SHOW ON LONG PRESS - TODO: PLACE IN A CHARACTER LIMIT AFTER THAT ELLIPSES
     return Scaffold(
       appBar: displayAppBar ? AppBar(
-        title: SizedBox(width: width/2, child: FittedBox(
+        title: SizedBox(width: checkSizeBasedOnActions() ?  width/2 : width/6, child: FittedBox(
           fit: BoxFit.cover,
           alignment: Alignment.centerLeft,
-          child:  Text(widget.title, key: titleKey,),
+          child:  Text(
+            widget.title.length > characterLimit 
+                ? '${widget.title.substring(0, (characterLimit -1))}...'
+                : '${widget.title}',
+            key: titleKey,
+          ),
         ),),
         shape: appBarTheme?.shape,
         centerTitle: appBarTheme?.centerTitle,
@@ -295,7 +315,6 @@ class _WebViewStackState extends State<WebViewStack> {
         backgroundColor: appBarTheme?.backgroundColor,
         foregroundColor: appBarTheme?.foregroundColor,
         actions: [
-
           //  THEME SELECTION
           changeAppBar != null
               ? IconButton(

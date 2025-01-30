@@ -17,7 +17,7 @@ class _ExampleReaderState extends State<ExampleReader> {
 
     //  SET UP VIEW MANAGER
     manager = EpubViewManager(
-        ebookUri: '',
+        ebookUri: 'https://zfzqwolxrejrzidhmsai.supabase.co/storage/v1/object/public/pages/books/clu4el3dz000111hpw1qxkfoz.epub',
         title: 'Testing Epub Reader - Comic Book Reader',
         appBarTheme: AppBarTheme(),
         isLightMode: true,
@@ -27,9 +27,7 @@ class _ExampleReaderState extends State<ExampleReader> {
         dropDownItemList: <String>['One', 'Two', 'Three'],
         dropDownButtonIcon: Icon(Icons.settings),
         initialValue: 'One',
-        onDropDownItemSelected: (String? string) {
-          print('Item selected ${string.toString()}');
-        }
+        onDropDownItemSelected: null
     );
     //  RUN TUTORIAL AFTER BUILD RENDERING IS COMPLETE
     //  RUN TUTORIAL WITH PERSONAL MESSAGES

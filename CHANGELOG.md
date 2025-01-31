@@ -1,3 +1,7 @@
+### 4.0.8
+
+- Reduced the spacing between images to zero 
+
 ### 4.0.7
 - Fixed text length with ellipses in truncation 
 - Added multiple varied sizes in the title 

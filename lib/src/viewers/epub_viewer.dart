@@ -355,7 +355,7 @@ class EpubViewManager {
             '}'
             '.horizontal-container img {'
             '  max-height: 100%;'
-            '  margin: 0 0px;'
+            '  margin: 0 0px !important;'
             '  object-fit: contain;'
             '  padding: 0px;'
             '}'
@@ -404,7 +404,7 @@ class EpubViewManager {
             '  overflow-x: hidden;' // Disable horizontal scrolling
             '  width: 100%;'
             '  box-sizing: border-box;'
-            '  padding: 0px;' // Add padding for spacing
+            '  padding: 0px !important;' // Add padding for spacing
             '}'
             '.vertical-container img {'
             '  max-width: 100%;' // Scale images to fit the container width

@@ -17,7 +17,7 @@ class _ExampleReaderState extends State<ExampleReader> {
 
     //  SET UP VIEW MANAGER
     manager = EpubViewManager(
-        ebookUri: 'https://zfzqwolxrejrzidhmsai.supabase.co/storage/v1/object/public/pages/books/clu4el3dz000111hpw1qxkfoz.epub',
+        ebookUri: '',
         title: 'Testing Epub Reader - Comic Book Reader',
         appBarTheme: AppBarTheme(),
         isLightMode: true,

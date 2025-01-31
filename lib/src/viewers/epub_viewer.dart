@@ -81,6 +81,8 @@ class EpubViewManager {
   String screenTitle = 'Full Screen';
   String screenDescription = 'Double tap the screen to toggle between full screen';
 
+  List<String> htmlFilesInMemory = [];
+
   //  EPUB BOOK REFERENCE
   EpubBookRef? epubBookRef;
   String? portrait;
@@ -107,10 +109,13 @@ class EpubViewManager {
 
       // Check if the file already exists
       final file = File(filePath);
+
       if (!await file.exists()) {
-        // Save the file if it doesn't exist
-        file.writeAsStringSync(htmlString);
+        // Save the file name to memory
+        htmlFilesInMemory.add(filePath);
       }
+      //  Save file, overwrite if exists
+      file.writeAsStringSync(htmlString);
       //  CLEAR UP MEMORY
       epubBookRef!.closeBook();
       //  ENSURE GC INIT
@@ -350,8 +355,9 @@ class EpubViewManager {
             '}'
             '.horizontal-container img {'
             '  max-height: 100%;'
-            '  margin: 0 10px;'
+            '  margin: 0 0px;'
             '  object-fit: contain;'
+            '  padding: 0px;'
             '}'
             '</style>'
             '</head>'
@@ -398,11 +404,11 @@ class EpubViewManager {
             '  overflow-x: hidden;' // Disable horizontal scrolling
             '  width: 100%;'
             '  box-sizing: border-box;'
-            '  padding: 10px;' // Add padding for spacing
+            '  padding: 0px;' // Add padding for spacing
             '}'
             '.vertical-container img {'
             '  max-width: 100%;' // Scale images to fit the container width
-            '  margin-bottom: 10px;' // Add spacing between images
+            '  margin-bottom: 0px;' // Add spacing between images
             '  object-fit: contain;' // Maintain image aspect ratio
             '}'
             '</style>'

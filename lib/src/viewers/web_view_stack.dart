@@ -144,7 +144,6 @@ class _WebViewStackState extends State<WebViewStack> {
         }).whenComplete(() {
           webViewController?.loadFile(currentHtmlFile!);
         });
-
       });
     }// end if - else
     webViewController?.reload();

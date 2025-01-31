@@ -1,3 +1,7 @@
+### 4.0.7
+- Fixed text length with ellipses in truncation 
+- Added multiple varied sizes in the title 
+
 ## 4.0.6
 
 - Added a fitted box to adjust title size according the text length

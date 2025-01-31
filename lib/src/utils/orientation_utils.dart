@@ -24,8 +24,9 @@ class OrientationUtils {
       '}'
       '.horizontal-container img {'
       '  max-height: 100%;'
-      '  margin: 0 10px;'
+      '  margin: 0 0px;'
       '  object-fit: contain;'
+      '  padding: 0px;'
       '}'
       '</style>'
       '</head>'
@@ -44,11 +45,11 @@ class OrientationUtils {
       '  overflow-x: hidden;' // Disable horizontal scrolling
       '  width: 100%;'
       '  box-sizing: border-box;'
-      '  padding: 10px;' // Add padding for spacing
+      '  padding: 0px;' // Add padding for spacing
       '}'
       '.vertical-container img {'
       '  max-width: 100%;' // Scale images to fit the container width
-      '  margin-bottom: 10px;' // Add spacing between images
+      '  margin-bottom: 0px;' // Add spacing between images
       '  object-fit: contain;' // Maintain image aspect ratio
       '}'
       '</style>'

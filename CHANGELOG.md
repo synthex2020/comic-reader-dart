@@ -1,3 +1,7 @@
+### 4.0.9
+
+- Reduced spacing between images by enforcing existing space in CSS using !important
+
 ### 4.0.8
 
 - Reduced the spacing between images to zero 

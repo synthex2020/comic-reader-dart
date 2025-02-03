@@ -1,3 +1,9 @@
+### 4.1.0
+
+- Added a book icon to the loading widget 
+- Reduced the size of numerical text in the loading widget 
+- Reduced the thickness of the loading bar in the loading widget
+
 ### 4.0.9
 
 - Reduced spacing between images by enforcing existing space in CSS using !important

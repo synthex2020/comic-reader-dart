@@ -21,11 +21,9 @@ class _ExampleReaderState extends State<ExampleReader> {
         title: 'Testing Epub Reader - Comic Book Reader',
         appBarTheme: AppBarTheme(),
         isLightMode: true,
-        changeAppBarTheme: () {
-          print('Change app bar theme');
-        },
+        changeAppBarTheme: null,
         dropDownItemList: <String>['One', 'Two', 'Three'],
-        dropDownButtonIcon: Icon(Icons.settings),
+        dropDownButtonIcon: null,
         initialValue: 'One',
         onDropDownItemSelected: null
     );

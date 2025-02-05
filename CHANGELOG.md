@@ -1,3 +1,7 @@
+### 4.1.1 
+
+- Improved memory management 
+
 ### 4.1.0
 
 - Added a book icon to the loading widget 

@@ -83,6 +83,13 @@ class _ExampleReaderState extends State<ExampleReader> {
   }// end init state
 
   @override
+  void dispose() {
+    super.dispose();
+    //  CLEAR APPLICATION MEMORY
+    manager?.closeReader();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder<Widget>(
         future: manager?.renderEbookReader(true),

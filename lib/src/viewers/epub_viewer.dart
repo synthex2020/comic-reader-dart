@@ -152,6 +152,7 @@ class EpubViewManager {
     //  CLEAR UP MEMORY
     epubBookRef!.closeBook();
     //  ENSURE GC INIT
+    htmlFilesInMemory.add(filePath);
     return filePath;
   }
   //  SWITCH ORIENTATION
@@ -722,6 +723,20 @@ class EpubViewManager {
   Future<void> closeReader () async {
     try {
       //  CLEAN UP USER MEMORY STORAGE
+      epubBookRef!.closeBook();
+      //  DELETE SAVED HTML FILE
+      for (var htmlFile in htmlFilesInMemory) {
+
+        // Define the file path
+        final filePath = htmlFile;
+
+        final file = File(filePath);
+        // Save the file if it doesn't exist
+        if (!await file.exists()) {
+          //  delete old file and add new
+          await file.delete();
+        } // end if
+      }// end for loop
     } catch(error) {
       debugPrint(error.toString());
       throw Exception(error);

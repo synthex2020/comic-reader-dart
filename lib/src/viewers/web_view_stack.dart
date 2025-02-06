@@ -294,16 +294,13 @@ class _WebViewStackState extends State<WebViewStack> {
     //  FLOATING BUTTON - SHOW ON LONG PRESS - TODO: PLACE IN A CHARACTER LIMIT AFTER THAT ELLIPSES
     return Scaffold(
       appBar: displayAppBar ? AppBar(
-        title: SizedBox(width: checkSizeBasedOnActions() ?  width/2 : width/6, child: FittedBox(
-          fit: BoxFit.cover,
-          alignment: Alignment.centerLeft,
-          child:  Text(
-            widget.title.length > characterLimit 
-                ? '${widget.title.substring(0, (characterLimit -1))}...'
-                : '${widget.title}',
-            key: titleKey,
-          ),
-        ),),
+        title: Text(
+          widget.title.length > characterLimit
+              ? '${widget.title.substring(0, (characterLimit -1))}...'
+              : '${widget.title}',
+          overflow: TextOverflow.clip,
+          key: titleKey,
+        ),
         shape: appBarTheme?.shape,
         centerTitle: appBarTheme?.centerTitle,
         elevation: appBarTheme?.elevation,

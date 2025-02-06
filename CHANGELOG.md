@@ -1,3 +1,8 @@
+### 4.1.2 
+
+- Removed fitted widget 
+- Calculated a set length for title length and added ellipses when relevant 
+
 ### 4.1.1 
 
 - Improved memory management 

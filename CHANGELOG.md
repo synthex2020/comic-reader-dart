@@ -1,3 +1,8 @@
+### 4.1.3
+
+- Added Zoom for android
+
+
 ### 4.1.2 
 
 - Removed fitted widget 

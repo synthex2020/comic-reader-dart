@@ -10,9 +10,9 @@ class OrientationUtils {
   static String horizontalMarker =
       '<html lang="en">'
       '<head>'
-      '<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">'
+      '<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=5">'
       '<style>'
-      'body { margin: 0; padding: 0; overflow: hidden; display: flex; flex-direction: column; }'
+      'body { margin: 0; padding: 0; overflow: hidden; display: flex; flex-direction: column; touch-action: manipulation; }'
       '.horizontal-container {'
       '  display: flex;'
       '  flex-direction: row;'
@@ -35,9 +35,9 @@ class OrientationUtils {
   static  String verticalMarker =
       '<html lang="en">'
       '<head>'
-      '<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">'
+      '<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=5">'
       '<style>'
-      'body { margin: 0; padding: 0; overflow: hidden; display: flex; flex-direction: column; height: 100vh; }'
+      'body { margin: 0; padding: 0; overflow: hidden; display: flex; flex-direction: column; height: 100vh; touch-action: manipulation; }'
       '.vertical-container {'
       '  display: flex;'
       '  flex-direction: column;' // Vertical arrangement of elements

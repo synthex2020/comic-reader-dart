@@ -2,9 +2,14 @@
 ///  [OPEN WEB-VIEW OF READ EPUB FROM URI]
 import 'package:epub_comic_reader/epub_comic_reader.dart' as reader;
 import 'package:epub_comic_reader/src/viewers/web_view_orientation_dialog.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_android/webview_flutter_android.dart';
+import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
+
 
 class WebViewStack extends StatefulWidget {
   //  HTML STRING
@@ -52,6 +57,7 @@ class WebViewStack extends StatefulWidget {
 
 class _WebViewStackState extends State<WebViewStack> {
   WebViewController? webViewController;
+  AndroidWebViewController? androidWebViewController;
 
   var loadingPercent = 0;
 
@@ -222,9 +228,15 @@ class _WebViewStackState extends State<WebViewStack> {
                 }// end if - else
               } // end on navigation request
           ))
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..loadFile(currentHtmlFile ?? widget.htmlString)
+    // ..loadRequest(Uri.parse('https://www.viz.com/manga-books/manga/minecraft-the-manga-volume-1/product/8222?utm_source=Google&utm_medium=SRCH&utm_campaign=CTMNCFT01&wpsrc=Google%20AdWords&wpcid=22180664844&wpsnetn=g&wpkwn=viz&wpkmatch=e&wpcrid=731362296915&wpscid=177034631489&wpkwid=kwd-300878571721&gad_source=1&gclid=Cj0KCQjw4cS-BhDGARIsABg4_J2jnLgQc3WYVkldaoNgHH1k48OmwQE0o54SUkAoGC6QGC3KWmivZMsaApwEEALw_wcB'))
       ..enableZoom(true);
+    
+    if (WebViewPlatform.instance is AndroidWebViewPlatform) {
+      final AndroidWebViewController androidWebViewController = webViewController?.platform as AndroidWebViewController;
+      androidWebViewController.enableZoom(true);
+      androidWebViewController.setJavaScriptMode(JavaScriptMode.unrestricted);
+    } // end if
     //  DEFAULT ORIENTATION
     isVertical = widget.defaultOrientation;
     //  DEFAULT DROP DOWN BUTTON ASPECTS
@@ -399,7 +411,14 @@ class _WebViewStackState extends State<WebViewStack> {
                 //  CONSUME THE NOTIFICATION
                 return true;
               },
-              child: WebViewWidget(controller: webViewController!)
+              child: WebViewWidget(
+                controller: webViewController!,
+                gestureRecognizers: <Factory<OneSequenceGestureRecognizer>> {
+                  Factory<VerticalDragGestureRecognizer>(() => VerticalDragGestureRecognizer()),
+                  Factory<HorizontalDragGestureRecognizer>(() => HorizontalDragGestureRecognizer()),
+                  Factory<ScaleGestureRecognizer>(() => ScaleGestureRecognizer())
+                },
+              )
           ),
           // Transparent GestureDetector overlay
           GestureDetector(

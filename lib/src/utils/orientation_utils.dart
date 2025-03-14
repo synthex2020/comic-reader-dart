@@ -12,7 +12,7 @@ class OrientationUtils {
       '<head>'
       '<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=5">'
       '<style>'
-      'body { margin: 0; padding: 0; overflow: hidden; display: flex; flex-direction: column; touch-action: manipulation; }'
+      'body { margin: 0; padding: 0; overflow: hidden; display: flex; flex-direction: row; touch-action: manipulation; }'
       '.horizontal-container {'
       '  display: flex;'
       '  flex-direction: row;'
@@ -33,29 +33,7 @@ class OrientationUtils {
       '<body>'
       '<div class="horizontal-container">';
   static  String verticalMarker =
-      '<html lang="en">'
-      '<head>'
-      '<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=5">'
-      '<style>'
-      'body { margin: 0; padding: 0; overflow: hidden; display: flex; flex-direction: column; height: 100vh; touch-action: manipulation; }'
-      '.vertical-container {'
-      '  display: flex;'
-      '  flex-direction: column;' // Vertical arrangement of elements
-      '  overflow-y: auto;' // Enable vertical scrolling
-      '  overflow-x: hidden;' // Disable horizontal scrolling
-      '  width: 100%;'
-      '  box-sizing: border-box;'
-      '  padding: 0px !important;' // Add padding for spacing
-      '}'
-      '.vertical-container img {'
-      '  max-width: 100%;' // Scale images to fit the container width
-      '  margin-bottom: 0px;' // Add spacing between images
-      '  object-fit: contain;' // Maintain image aspect ratio
-      '}'
-      '</style>'
-      '</head>'
-      '<body>'
-      '<div class="vertical-container">';
+  '<html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=5"><style>body { margin: 0; padding: 0; overflow: hidden; display: flex; flex-direction: column; height: 100vh; touch-action: manipulation;}.vertical-container {  display: flex;  flex-direction: column;  overflow-y: auto;  overflow-x: hidden;  width: 100%;  box-sizing: border-box;  padding: 0px !important;}.vertical-container img {  max-width: 100%;  margin-bottom: 0px;  object-fit: contain;}</style></head><body><div class="vertical-container">';
 
   //  FETCH HTML STRING HORIZONTAL
   static String horizontalStringSummon (String string) {

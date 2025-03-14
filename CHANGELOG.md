@@ -1,3 +1,9 @@
+### 4.1.4
+
+- Added a file compression function on saving epub to disk
+- Added a dynamic solution to handling large epub files in memory using cache and local storage 
+- Fixed orientation bug that came as a result of storage solution implementation 
+
 ### 4.1.3
 
 - Added Zoom for android

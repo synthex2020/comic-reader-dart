@@ -142,7 +142,7 @@ class _WebViewStackState extends State<WebViewStack> {
         widget.readerInstance.changeToHorizontal().then((String result) {
           currentHtmlFile = result;
         }).whenComplete(() {
-          webViewController?.loadFile(currentHtmlFile!);
+          webViewController?.loadHtmlString(currentHtmlFile!);
         });
       });
 
@@ -152,7 +152,7 @@ class _WebViewStackState extends State<WebViewStack> {
         widget.readerInstance.changeToVertical().then((String result) {
           currentHtmlFile = result;
         }).whenComplete(() {
-          webViewController?.loadFile(currentHtmlFile!);
+          webViewController?.loadHtmlString(currentHtmlFile!);
         });
       });
     }// end if - else
@@ -227,7 +227,7 @@ class _WebViewStackState extends State<WebViewStack> {
                 }// end if - else
               } // end on navigation request
           ))
-      ..loadFile(currentHtmlFile ?? widget.htmlString)
+      ..loadHtmlString(currentHtmlFile ?? widget.htmlString)
     // ..loadRequest(Uri.parse('https://www.viz.com/manga-books/manga/minecraft-the-manga-volume-1/product/8222?utm_source=Google&utm_medium=SRCH&utm_campaign=CTMNCFT01&wpsrc=Google%20AdWords&wpcid=22180664844&wpsnetn=g&wpkwn=viz&wpkmatch=e&wpcrid=731362296915&wpscid=177034631489&wpkwid=kwd-300878571721&gad_source=1&gclid=Cj0KCQjw4cS-BhDGARIsABg4_J2jnLgQc3WYVkldaoNgHH1k48OmwQE0o54SUkAoGC6QGC3KWmivZMsaApwEEALw_wcB'))
       ..enableZoom(true);
     

@@ -92,6 +92,7 @@ class EpubViewManager {
 
   //  CURRENT HTML STRING
   String? currentHtmlString;
+  String? bookContents;
 
   //  STORAGE UTILITIES
   StorageUtil storageUtil = StorageUtil();
@@ -103,13 +104,9 @@ class EpubViewManager {
       final directory = await getApplicationDocumentsDirectory();
 
       // Create a specific folder for caching EPUB files
-      final epubHtml = Directory('${directory.path}/epub_html');
-      if (!await epubHtml.exists()) {
-        await epubHtml.create(recursive: true);
-      }
 
       // Define the file path
-      final filePath = '${epubHtml.path}/$title.html';
+      final filePath = '${directory.path}/$title-epub.html';
 
       // Check if the file already exists
       final file = File(filePath);
@@ -161,17 +158,27 @@ class EpubViewManager {
   }
   //  SWITCH ORIENTATION
   Future<String> changeToHorizontal () async {
-    //  CONVERT HTML STRING
-    var result = OrientationUtils.horizontalStringSummon(currentHtmlString!);
     //  SAVE HTML STRING TO LOCAL
-    return await result;
+    var directory = await getApplicationCacheDirectory();
+    var horizontalString = OrientationUtils.horizontalStringSummon(bookContents!);
+    var horizontalFile = File('${directory.path}/temporary.html');
+    //  WRITE THE FILE
+    var file = await horizontalFile.writeAsString(horizontalString);
+    var result = file.path;
+    currentHtmlString = result;
+    return result;
   } // end change to horizontal
 
   Future<String> changeToVertical () async {
-    //  CONVERT HTML STRING
-    var result = OrientationUtils.verticalStringSummon(currentHtmlString!);
     //  SAVE HTML STRING TO LOCAL
-    return await result;
+    var directory = await getApplicationCacheDirectory();
+    var verticalString = OrientationUtils.verticalStringSummon(bookContents!);
+    var verticalFile = File('${directory.path}/temporary.html');
+    //  WRITE TO THE FILE
+    var resultant = await verticalFile.writeAsString(verticalString);
+    var result = resultant.path;
+    currentHtmlString = result;
+    return result;
   } // end change to vertical
 
   //  set tutorial properties
@@ -297,31 +304,26 @@ class EpubViewManager {
 
     if (result) {
       //  THE HTML FILE EXISTS DECRYPT AND RETURN
-      var htmlString = await storageUtil.decryptDecompressEpub(title);
-      var finalString = '';
-      if (isVertical) {
-        //  ENSURE VERTICAL ORIENTATION
-        finalString = OrientationUtils.verticalStringSummon(htmlString);
-        return finalString;
-      }else{
-        //  ENSURE HORIZONTAL ORIENTATION
-        finalString = OrientationUtils.horizontalStringSummon(htmlString);
-        return finalString;
-      }// end if-else
+      var htmlString = await storageUtil.decryptDecompressEpub(title, isVertical);
+      return htmlString;
     }else{
       //  CREATE NEW HTML FILE AND SAVE ACCORDINGLY
       var openedEbook = '';
       if (isVertical) {
         //  EMPLOY VERTICAL BUFFER
         openedEbook = await buildStringBuffer(book!);
+        bookContents = openedEbook;
       }else{
         //  EMPLOY HORIZONTAL BUFFER
         openedEbook = await buildStringBufferForHorizontal(book!);
+        bookContents = openedEbook;
       }// end if-else
 
       //  SAVE HTML FILE TO LOCAL STORAGE OR CACHE
       await storageUtil.saveEncryptedCompressedEpub(openedEbook, title, fileSize);
-      return openedEbook;
+      //  RETRIEVE SAVED HTML FILE
+      var resultant = await storageUtil.decryptDecompressEpub(title, isVertical);
+      return resultant;
     }// end if else
   } // end process book into buffer
   //  epub widget builder

@@ -1,3 +1,8 @@
+### 4.1.5
+
+- Fixed the infinite loading problem
+- Now HTML is being read from file instead from a string in memory 
+
 ### 4.1.4
 
 - Added a file compression function on saving epub to disk

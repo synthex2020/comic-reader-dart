@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:archive/archive.dart';
 import 'package:crypto/crypto.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
+import 'package:epub_comic_reader/epub_comic_reader.dart';
 import 'package:path_provider/path_provider.dart';
 
 class StorageUtil {
@@ -118,8 +119,9 @@ class StorageUtil {
 
     return resultant;
   } // end check for existing html files
+
   // **Decrypt & Decompress EPUB When Needed**
-  Future<String> decryptDecompressEpub(String fileName) async {
+  Future<String> decryptDecompressEpub(String fileName, bool orientation) async {
     //  CHECK KEY
     if (key == null) {
       // Use a secure 32-byte key (change this in production!)
@@ -163,12 +165,24 @@ class StorageUtil {
 
     // Decompress EPUB
     final archive = ZipDecoder().decodeBytes(decryptedData);
+    var htmlFile = File('${cacheDirectory.path}/temporary.html');
+
     for (var file in archive) {
       if (file.isFile) {
-        return String.fromCharCodes(file.content as List<int>);
+        var string = String.fromCharCodes(file.content as List<int>);
+        var finalString = '';
+        //  CHECK ORIENTATION
+        if (orientation) {
+          //  VERTICAL
+          finalString = OrientationUtils.verticalStringSummon(string);
+        }else {
+          //  HORIZONTAL
+          finalString = OrientationUtils.horizontalStringSummon(string);
+        }// end if-else
+        await htmlFile.writeAsString(finalString);
+        return htmlFile.path;
       }
     }
-
     throw Exception('Decryption or decompression failed');
   } // end decrypt and compress
 

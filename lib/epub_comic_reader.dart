@@ -3,6 +3,8 @@ library epub_comic_reader;
 export 'src/utils/enum_from_string.dart';
 export 'src/utils/orientation_utils.dart';
 export 'src/utils/storage_util.dart';
+export 'src/utils/network_utils.dart';
+export 'src/utils/download_util.dart';
 export 'src/utils/tutorial_utility.dart';
 export 'src/epub_reader.dart';
 export 'src/epub_writer.dart';

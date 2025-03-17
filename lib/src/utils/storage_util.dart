@@ -81,16 +81,16 @@ class StorageUtil {
 
     // Encrypt compressed EPUB
     // Use a secure 32-byte key (change this in production!)
-    final keyBytes = sha256.convert(utf8.encode('nt5y75fLOB+SFrBgnACBH1kIVsqHERAWJxjP0zszk64=')).bytes;
-    key = encrypt.Key(Uint8List.fromList(keyBytes));
-    iv = encrypt.IV.fromLength(16); // Random IV
-
-    final encrypter = encrypt.Encrypter(encrypt.AES(key));
-    final encryptedData = encrypter.encryptBytes(compressedData!, iv: iv).bytes;
+    // final keyBytes = sha256.convert(utf8.encode('nt5y75fLOB+SFrBgnACBH1kIVsqHERAWJxjP0zszk64=')).bytes;
+    // key = encrypt.Key(Uint8List.fromList(keyBytes));
+    // iv = encrypt.IV.fromLength(16); // Random IV
+    //
+    // final encrypter = encrypt.Encrypter(encrypt.AES(key));
+    // final encryptedData = encrypter.encryptBytes(compressedData!, iv: iv).bytes;
 
     // Save encrypted EPUB
-    final encryptedFile = File('${targetDir.path}/$fileName.enc');
-    await encryptedFile.writeAsBytes(encryptedData);
+    final encryptedFile = File('${targetDir.path}/$fileName.html');
+    await encryptedFile.writeAsBytes(compressedData!);
 
     return encryptedFile;
   } // end save encrypted file
@@ -123,12 +123,12 @@ class StorageUtil {
   // **Decrypt & Decompress EPUB When Needed**
   Future<String> decryptDecompressEpub(String fileName, bool orientation) async {
     //  CHECK KEY
-    if (key == null) {
-      // Use a secure 32-byte key (change this in production!)
-      final keyBytes = sha256.convert(utf8.encode('nt5y75fLOB+SFrBgnACBH1kIVsqHERAWJxjP0zszk64=')).bytes;
-      key = encrypt.Key(Uint8List.fromList(keyBytes));
-      iv = encrypt.IV.fromLength(16); // Random IV
-    }
+    // if (key == null) {
+    //   // Use a secure 32-byte key (change this in production!)
+    //   final keyBytes = sha256.convert(utf8.encode('nt5y75fLOB+SFrBgnACBH1kIVsqHERAWJxjP0zszk64=')).bytes;
+    //   key = encrypt.Key(Uint8List.fromList(keyBytes));
+    //   iv = encrypt.IV.fromLength(16); // Random IV
+    // }
 
     //  POSSIBLE FILE LOCATIONS 
     final cacheDirectory = await getApplicationCacheDirectory();
@@ -137,9 +137,9 @@ class StorageUtil {
     
     //  LIST OF FILES TO LOOK THROUGH 
     final possibilities = <File>[
-      File('${cacheDirectory.path}/$fileName.enc'),
-      File('${temporaryDirectory.path}/$fileName.enc'),
-      File('${documentDirectory.path}/$fileName.enc'),
+      File('${cacheDirectory.path}/$fileName.html'),
+      File('${temporaryDirectory.path}/$fileName.html'),
+      File('${documentDirectory.path}/$fileName.html'),
     ];
     
     //  FIND THE STORED FILE IF ITS THERE 
@@ -160,11 +160,11 @@ class StorageUtil {
     final encryptedBytes = await encryptedFile.readAsBytes();
 
     // Decrypt data
-    final encrypter = encrypt.Encrypter(encrypt.AES(key));
-    final decryptedData = encrypter.decryptBytes(encrypt.Encrypted(encryptedBytes), iv: iv);
+    // final encrypter = encrypt.Encrypter(encrypt.AES(key));
+    // final decryptedData = encrypter.decryptBytes(encrypt.Encrypted(encryptedBytes), iv: iv);
 
     // Decompress EPUB
-    final archive = ZipDecoder().decodeBytes(decryptedData);
+    final archive = ZipDecoder().decodeBytes(encryptedBytes);
     var htmlFile = File('${cacheDirectory.path}/temporary.html');
 
     for (var file in archive) {

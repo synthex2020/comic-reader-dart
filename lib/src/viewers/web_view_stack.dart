@@ -136,26 +136,22 @@ class _WebViewStackState extends State<WebViewStack> {
 
   void switchOrientation () {
     if (isVertical){
-      setState(() {
-        isVertical = false;
-        //  SET NEW ORIENTATION
-        widget.readerInstance.changeToHorizontal().then((String result) {
-          currentHtmlFile = result;
-        }).whenComplete(() {
-          webViewController?.loadFile(currentHtmlFile!);
-        });
+      isVertical = false;
+      //  SET NEW ORIENTATION
+      widget.readerInstance.changeToHorizontal().then((String result) {
+        currentHtmlFile = result;
+      }).whenComplete(() {
+        webViewController?.loadFile(currentHtmlFile!);
       });
-
     }else{
-      setState(() {
-        isVertical = true;
-        widget.readerInstance.changeToVertical().then((String result) {
-          currentHtmlFile = result;
-        }).whenComplete(() {
-          webViewController?.loadFile(currentHtmlFile!);
-        });
+      isVertical = true;
+      widget.readerInstance.changeToVertical().then((String result) {
+        currentHtmlFile = result;
+      }).whenComplete(() {
+        webViewController?.loadFile(currentHtmlFile!);
       });
     }// end if - else
+    setState(() {});
     webViewController?.reload();
     //  SHOW CASE CHANGE IN ORIENTATION TO THE USER
     showAdaptiveDialog(

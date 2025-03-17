@@ -7,7 +7,9 @@ import 'package:image/image.dart' as image;
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'example_reader.dart';
 
-void main() => runApp(EpubWidget());
+void main() async{
+  runApp(EpubWidget());
+}
 
 class EpubWidget extends StatefulWidget {
   @override

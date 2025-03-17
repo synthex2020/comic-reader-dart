@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:epub_comic_reader/src/utils/encryption_utils.dart';
+import 'package:epub_comic_reader/src/utils/network_utils.dart';
 import 'package:epub_comic_reader/src/utils/orientation_utils.dart';
 import 'package:epub_comic_reader/src/utils/storage_util.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:epub_comic_reader/src/utils/tutorial_utility.dart';
-import 'package:http/http.dart' as http;
 import 'package:epub_comic_reader/epub_comic_reader.dart' as epub;
 import 'package:flutter/material.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
@@ -96,7 +97,11 @@ class EpubViewManager {
 
   //  STORAGE UTILITIES
   StorageUtil storageUtil = StorageUtil();
-
+  NetworkUtils? networkManager;
+  //  SET UP FILE SIZE
+  void setUpFileSize(int fileSized) {
+    fileSize = fileSized;
+  }
   //  SAVE EPUB FILE AS HTML TO RENDER
   Future<String> saveHtmlFile (String htmlString) async {
     try {
@@ -265,35 +270,36 @@ class EpubViewManager {
     return widget;
   } // end render Ebook reader
   //  fetch book
-  Future<EpubBookRef> fetchBook() async {
-    //  FETCH THE EBOOK FROM URL
-    final response = await http.get(Uri.parse(ebookUri));
-    //  SET FILE SIZE
-    fileSize = response.contentLength;
-    //  GET APPLICATION CACHE DIRECTORY
-    final directory = await getApplicationCacheDirectory();
-    final filePath = '${directory.path}/$title.epub';
 
-    //  CHECK IF THE FILE ALREADY EXISTS
-    final file_ = File(filePath);
-    if (await file_.exists()) {
-      //  WE OPEN THE FILE SINCE IT IS ALREADY THERE
-      //  DECRYPT AND DECOMPRESS EPUB
-      epubBookRef = await EpubReader.openBook(file_.readAsBytesSync());
-      return epubBookRef!;
+  Future<EpubBookRef> fetchBook() async {
+    //  DOWNLOAD AND SAVE THE FILE
+    final temporaryDirectory = await getApplicationCacheDirectory();
+    networkManager = NetworkUtils(tempDirectory: temporaryDirectory.path);
+    var filePath = await networkManager?.downloadEpubFile(ebookUri, 'temporary.epub');
+
+    //  CHECK DOWNLOAD SUCCESS
+    if (filePath == null) {
+      throw Exception('Failed download epub file');
+    }// end if
+
+    // while(filePath == null) {
+    //   debugPrint('[FETCH BOOK] : FILE PATH NULL');
+    // } // end while
+
+    //  ACCESS THE SAVED FILE AND RETURN THE DATA
+    var epubFile = File(filePath);
+    var fileContents;
+    if (await epubFile.exists()) {
+      //  OPEN THE SAVED EPUB FILE
+      fileSize = await epubFile.length();
+      fileContents = await epubFile.readAsBytes();
+      //  RUN EXPENSIVE OPERATION IN ISOLATE
+      epubBookRef =  await EpubReader.openBook(fileContents);
     }else{
-      //  WE OPEN A FILE AND SAVE IT FROM THE URI
-      if (response.statusCode == 200 ) {
-        //  SAVE THE EPUB DATA LOCALLY
-        final localFilePath = await saveEpubToLocalStorage(response.bodyBytes, '$title.epub');
-        //  OPEN THE SAVED EPUB FILE
-        final file = File(localFilePath);
-        epubBookRef = await EpubReader.openBook(file.readAsBytesSync());
-        return epubBookRef!;
-      }else{
-        throw Exception('Failed to load epub from url: $ebookUri');
-      } // end if - else
+      throw Exception('File not found');
     }// end if-else
+
+    return epubBookRef!;
 
   } // end fetch book
 
@@ -320,6 +326,8 @@ class EpubViewManager {
       }// end if-else
 
       //  SAVE HTML FILE TO LOCAL STORAGE OR CACHE
+      // await EncryptionUtils.initialize();
+      // await EncryptionUtils.encryptAndSaveFile(openedEbook, title, fileSize);
       await storageUtil.saveEncryptedCompressedEpub(openedEbook, title, fileSize);
       //  RETRIEVE SAVED HTML FILE
       var resultant = await storageUtil.decryptDecompressEpub(title, isVertical);
@@ -327,11 +335,18 @@ class EpubViewManager {
     }// end if else
   } // end process book into buffer
   //  epub widget builder
+
+  Future<String> fetchAndProcessBook(bool isVertical) async {
+    //  INIT THE PROCESSOR
+    var book = await fetchBook();
+    var htmlFile = await processBookIntoStringBuffer(book, isVertical, fileSize!);
+    return htmlFile;
+  }// end function
+
   Future<Widget> buildWidgetBuilderDefault () async {
    // READ THE BOOK AND RETURN THE WEB VIEW STACK
-    //  READ BOOK AND GET HTML STRING
-    var book = await fetchBook();
-    var htmlString = await processBookIntoStringBuffer(book, true, fileSize!);
+    var htmlString = await fetchAndProcessBook(true);
+    //  ENSURE ONLY MAIN ISOLATE REMAINS
     //  UPDATE CURRENT HTML STRING
     currentHtmlString = htmlString;
     //  ADD GLOBAL KEYS FOR APP BAR
@@ -352,11 +367,10 @@ class EpubViewManager {
 
   //  epub build horizontal scrolling widget
   Future<Widget> buildWidgetBuilderHorizontal () async {
-    //  OPEN THE EPUB FILE
-    var book = await fetchBook();
-    //  GET THE HTML STRING
-    var htmlString = await processBookIntoStringBuffer(book, false, fileSize!);
-    //  SAVE TO CURRENT HTML STRING
+    // READ THE BOOK AND RETURN THE WEB VIEW STACK
+    var htmlString = await fetchAndProcessBook(true);
+    //  ENSURE ONLY MAIN ISOLATE REMAINS
+    //  UPDATE CURRENT HTML STRING
     currentHtmlString = htmlString;
     //  RETURN THE RELEVANT WIDGET
     return epub.WebViewStack(

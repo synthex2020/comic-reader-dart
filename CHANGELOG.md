@@ -1,3 +1,11 @@
+### 4.1.6
+
+- Removed Encryption pattern
+- Added background isolate processing to epub download 
+- Changed epub and html files working memory to cache and temporary directory 
+- Compressed epub and html files on save 
+- Set up background processing to download epub file 
+
 ### 4.1.5
 
 - Fixed the infinite loading problem

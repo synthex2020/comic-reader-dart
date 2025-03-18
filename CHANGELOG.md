@@ -1,3 +1,7 @@
+### 4.1.8
+
+- Fixed initial horizontal orientation 
+
 ### 4.1.7
 
 - Removed background processing 

@@ -92,7 +92,7 @@ class _ExampleReaderState extends State<ExampleReader> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Widget>(
-        future: manager?.renderEbookReader(true),
+        future: manager?.renderEbookReader(false),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(child: Text(snapshot.error.toString()),);

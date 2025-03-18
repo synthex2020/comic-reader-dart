@@ -349,7 +349,7 @@ class EpubViewManager {
   //  epub build horizontal scrolling widget
   Future<Widget> buildWidgetBuilderHorizontal () async {
     // READ THE BOOK AND RETURN THE WEB VIEW STACK
-    var htmlString = await fetchAndProcessBook(true);
+    var htmlString = await fetchAndProcessBook(false);
     //  ENSURE ONLY MAIN ISOLATE REMAINS
     //  UPDATE CURRENT HTML STRING
     currentHtmlString = htmlString;

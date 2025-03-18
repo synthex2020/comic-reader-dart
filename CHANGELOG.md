@@ -1,3 +1,8 @@
+### 4.1.7
+
+- Removed background processing 
+- Used Dio to handle http request 
+
 ### 4.1.6
 
 - Removed Encryption pattern

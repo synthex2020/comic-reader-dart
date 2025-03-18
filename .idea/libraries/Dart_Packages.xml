@@ -170,6 +170,20 @@
             </list>
           </value>
         </entry>
+        <entry key="dio">
+          <value>
+            <list>
+              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/dio-5.8.0+1/lib" />
+            </list>
+          </value>
+        </entry>
+        <entry key="dio_web_adapter">
+          <value>
+            <list>
+              <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/dio_web_adapter-2.1.1/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="encrypt">
           <value>
             <list>
@@ -1117,6 +1131,8 @@
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/dbus-0.7.11/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/device_info_plus-11.3.0/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/device_info_plus_platform_interface-7.0.2/lib" />
+      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/dio-5.8.0+1/lib" />
+      <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/dio_web_adapter-2.1.1/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/encrypt-5.0.3/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/fake_async-1.3.2/lib" />
       <root url="file://$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.dev/ffi-2.1.3/lib" />

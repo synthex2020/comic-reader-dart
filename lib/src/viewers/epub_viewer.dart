@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:epub_comic_reader/src/utils/encryption_utils.dart';
 import 'package:epub_comic_reader/src/utils/network_utils.dart';
 import 'package:epub_comic_reader/src/utils/orientation_utils.dart';
 import 'package:epub_comic_reader/src/utils/storage_util.dart';
@@ -275,29 +274,11 @@ class EpubViewManager {
     //  DOWNLOAD AND SAVE THE FILE
     final temporaryDirectory = await getApplicationCacheDirectory();
     networkManager = NetworkUtils(tempDirectory: temporaryDirectory.path);
-    var filePath = await networkManager?.downloadEpubFile(ebookUri, 'temporary.epub');
-
-    //  CHECK DOWNLOAD SUCCESS
-    if (filePath == null) {
-      throw Exception('Failed download epub file');
-    }// end if
-
-    // while(filePath == null) {
-    //   debugPrint('[FETCH BOOK] : FILE PATH NULL');
-    // } // end while
+    var fileContents = await networkManager?.downloadEpubFile(ebookUri);
+    fileSize = networkManager?.fileSize;
 
     //  ACCESS THE SAVED FILE AND RETURN THE DATA
-    var epubFile = File(filePath);
-    var fileContents;
-    if (await epubFile.exists()) {
-      //  OPEN THE SAVED EPUB FILE
-      fileSize = await epubFile.length();
-      fileContents = await epubFile.readAsBytes();
-      //  RUN EXPENSIVE OPERATION IN ISOLATE
-      epubBookRef =  await EpubReader.openBook(fileContents);
-    }else{
-      throw Exception('File not found');
-    }// end if-else
+    epubBookRef =  await EpubReader.openBook(fileContents!);
 
     return epubBookRef!;
 
